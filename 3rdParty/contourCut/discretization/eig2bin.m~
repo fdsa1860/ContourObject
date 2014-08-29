@@ -1,0 +1,34 @@
+function [bins, p2b] = eig2bin(eig_vec, para)
+% [bins, p2b] = eig2bin(eig_vec, para);
+
+% Parsing parameters
+if (nargin < 2)
+    para.mag_thres = 0.025 * ones(1, size(eig_vec, 2));
+    para.nb_bin = 16;
+else
+    if (length(para.mag_thres) == 1)
+        para.mag_thres = para.mag_thres * ones(1, size(eig_vec, 2));
+    end
+end
+
+nb_pix = size(eig_vec, 1)/2;
+thres_arr = repmat(para.mag_thres, [nb_pix*2, 1]);
+
+% This is bad
+eig_fold = repmat(abs(eig_vec(1:end/2, :)) + abs(eig_vec(end/2+1:end, :)), [2,1])/2;
+ind = find(eig_fold > thres_arr);
+phase = angle(eig_vec(ind));
+bins = sparse(size(eig_vec, 1), size(eig_vec, 2));
+for i = 1:para.nb_bin
+    
+
+% si = mod(ind-1, 2*nb_pix) + 1;
+% sj = floor((ind-1)/2/nb_pix) + 1;
+% val = floor(((phase+pi)/2/pi - eps)*para.nb_bin) + 1;
+% bins = sparse(si, sj, val, size(eig_vec, 1), size(eig_vec, 2));
+
+
+% Construct bin to pixel matrix
+if (nargout == 2)
+    p2b = sparse(si, val+(sj-1)*para.nb_bin, 1, 2*nb_pix, para.nb_bin*size(eig_vec, 2));
+end

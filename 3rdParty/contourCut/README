@@ -1,0 +1,25 @@
+
+run_contour.m is the main file and contour_demo.m shows a demo of how it can be used.
+
+DEPENDENCIES
+---------------
+This code uses the Normalized Cut and Pb algorithms.  A version of both has been included in this package.  Normalized cut is also available from 
+
+http://www.cis.upenn.edu/~jshi/software/
+
+and Pb is available as part of the Berkeley Segmentation Dataset from
+
+http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/segbench/
+
+The Bellman-Ford shortest path algorithm also requires the MatlabBGL package, included here and separately available from
+
+http://www.stanford.edu/~dgleich/programs/matlab_bgl/
+
+
+COMPILING
+---------------
+
+All .mex files required by our code are located in the 'mex' directory.  Compilations for several platforms are already included and they can be recompiled from MATLAB by running compile_all.m.
+
+The Ncut and Pb packages also contain .mex files which may need to be compiled depending on your system.
+
