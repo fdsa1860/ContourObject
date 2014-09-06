@@ -1,9 +1,9 @@
 % small test
 
 % circle
-c = [ 0 0];
+c = [ 3 4];
 r = 1;
-t = 0:0.05:2*pi;
+t = 0:0.5:2*pi;
 
 sx1 = c(1) + r * cos(t) + 0.0*randn(size(t));
 sy1 = c(2) + r * sin(t) + 0.000*randn(size(t));
@@ -14,29 +14,25 @@ A = [0.9988 -0.05;0.05 0.9988];
 plot(sx1,sy1,'b');
 
 
-% line
-k = 0.5;
-b = 0;
-% sx2 = 0:0.05:2*pi;
-% sy2 = k * sx2 + b;
-sx2 = c(1) + r * cos(t);
-sy2 = c(2) + 0.5 * sin(t);
+% sin
+sx2 = 0.1:0.05:2*pi+1;
+sy2 = sin(sx2);
 
 hold on;plot(sx2,sy2,'g');hold off;
 
-k = 0;
+k = 0.5;
 b = 1;
 sx3 = 0:0.05:2*pi;
 sy3 = k * sx3 + b;
 
-plot(sx2,sy2,'g');
+hold on;plot(sx3,sy3,'r');hold off;
 
-L = 26;
+L = 6;
 
-% ind1 = 51:51+L-1;
-ind1 = 1:length(t);
+ind1 = 1:1+L-1;
+% ind1 = 1:length(t);
 % ind1 = 1:126;
-ind2 = 82:82+L-1;
+ind2 = 5:5+L-1;
 ind3 = 32:32+L-1;
 ind4 = 100:100+L-1;
 
@@ -46,8 +42,8 @@ x2 = sx1(ind2);
 y2 = sy1(ind2);
 x3 = sx2(ind3);
 y3 = sy2(ind3);
-x4 = sx3(ind4);
-y4 = sy3(ind4);
+x4 = sx2(ind4);
+y4 = sy2(ind4);
 
 figure(2);
 plot(x1,y1,'b');
@@ -77,13 +73,15 @@ u4 = diff(x4);
 v4 = diff(y4);
 
 figure(3);
-plot(x1,y1,'b');
+plot(u1,v1,'b');
 hold;
-plot(x2,y2,'g');
-plot(x3,y3,'m');
-plot(x4,y4,'r');
+plot(u2,v2,'g');
+plot(u3,v3,'m');
+plot(u4,v4,'r');
 hold;
 axis equal
+
+L = 44;
 
 Hx1 = hankel(x1(1:ceil(L/2)),x1(ceil(L/2):end));
 Hy1 = hankel(y1(1:ceil(L/2)),y1(ceil(L/2):end));
@@ -117,21 +115,25 @@ Hu4 = hankel(u4(1:ceil(L/2)),u4(ceil(L/2):end));
 Hv4 = hankel(v4(1:ceil(L/2)),v4(ceil(L/2):end));
 Hd4 = [Hu4;Hv4];
 
-H1 = H1';
-H2 = H2';
-H3 = H3';
-H4 = H4';
-Hd1 = Hd1';
-Hd2 = Hd2';
-Hd3 = Hd3';
-Hd4 = Hd4';
+% H1 = H1';
+% H2 = H2';
+% H3 = H3';
+% H4 = H4';
+% Hd1 = Hd1';
+% Hd2 = Hd2';
+% Hd3 = Hd3';
+% Hd4 = Hd4';
 
 tic;
 
-% [U1,S1,V1] = svd(H1);
-% [U2,S2,V2] = svd(H2);
-% [U3,S3,V3] = svd(H3);
-% [U4,S4,V4] = svd(H4);
+[U1,S1,V1] = svd(H1);
+[U2,S2,V2] = svd(H2);
+[U3,S3,V3] = svd(H3);
+[U4,S4,V4] = svd(H4);
+[Ud1,Sd1,Vd1] = svd(Hd1);
+[Ud2,Sd2,Vd2] = svd(Hd2);
+[Ud3,Sd3,Vd3] = svd(Hd3);
+[Ud4,Sd4,Vd4] = svd(Hd4);
 % H1 = U1*(S1>1e-3)*V1';
 % H2 = U2*(S2>1e-3)*V2';
 % H3 = U3*(S3>1e-3)*V3';
@@ -160,10 +162,10 @@ d34
 
 tic;
 
-[U1,S1,V1] = svd(H1);
-[U2,S2,V2] = svd(H2);
-[U3,S3,V3] = svd(H3);
-[U4,S4,V4] = svd(H4);
+% [U1,S1,V1] = svd(H1);
+% [U2,S2,V2] = svd(H2);
+% [U3,S3,V3] = svd(H3);
+% [U4,S4,V4] = svd(H4);
 % H1 = U1*(S1>1e-3)*V1';
 % H2 = U2*(S2>1e-3)*V2';
 % H3 = U3*(S3>1e-3)*V3';
