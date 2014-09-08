@@ -1,12 +1,13 @@
 % Test the Binlong's metric on the contour clustering and classification in images
-close all;
-clear;  
-clc;
+close all;clear;clc;
+addpath(genpath('../3rdParty'));
+addpath(genpath('../matlab'));
 
 % load image
-img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
+% img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
-% img = im2double(imread('../inputData/image/241004.jpg')); 
+% img = im2double(imread('../inputData/image/241004.jpg'));
+img = im2double(imread('../inputData/image/duck.jpg')); 
 
 imgSize = size(img);
 

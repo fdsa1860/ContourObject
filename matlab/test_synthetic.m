@@ -2,6 +2,7 @@
 
 clear;clc;close all;
 addpath(genpath('../3rdParty'));
+addpath(genpath('../matlab'));
 
 % produce and sample the synthetic data
 produce_step = 0.0001;
