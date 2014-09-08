@@ -1,1 +1,1 @@
-contour object detection
+contour clustering
