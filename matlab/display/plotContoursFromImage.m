@@ -11,19 +11,19 @@ c(10, :) = [0.5 0 0];
 c(11, :) = [1 1 0];
 c(12, :) = [1 0 1];
 
-CC = zeros(imgSize);
-for i = 1:k
-    id = find(label == i);
-    for j = 1:nEach(i)
-        for L = 1:Length(id(j))
-            row = discrete_data{id(j)}(L, 1);
-            col = discrete_data{id(j)}(L, 2);
-            CC(row, col, :) = 255 * c(i, :);
-        end
-    end
-end
+% CC = zeros(imgSize);
+% for i = 1:k
+%     id = find(label == i);
+%     for j = 1:nEach(i)
+%         for L = 1:Length(id(j))
+%             row = discrete_data{id(j)}(L, 1);
+%             col = discrete_data{id(j)}(L, 2);
+%             CC(row, col, :) = 255 * c(i, :);
+%         end
+%     end
+% end
 
-figure, imshow(CC);
+% figure, imshow(CC);
 
 hFig = figure;
 set(hFig, 'Position', [200 100 1000 700]);

@@ -7,7 +7,7 @@ addpath(genpath('../matlab'));
 % img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
 % img = im2double(imread('../inputData/image/241004.jpg'));
-img = im2double(imread('../inputData/image/duck.jpg')); 
+img = im2double(imread('../inputData/image/kids.png')); 
 
 imgSize = size(img);
 
@@ -20,9 +20,14 @@ contour = extractContours(img, 2);
 
 % rankminimization to reduce the effect of discretization
 Size = imgSize(1:2);
-hankel_size = 15;
+hankel_size = 4;
 lambda = 5;
 contour_clean = rankminimize(contour, hankel_size, Size, lambda);
+
+%% resample
+mode = 1; % fixed length
+fixedLen = 1; 
+contour_clean = sampleAlongCurve(contour_clean, mode, fixedLen);
 
 %% Contour trajectories clustering
 
@@ -60,7 +65,7 @@ title(['Number of class: ' num2str(k) ', Feature: cumulative angle'], 'FontSize'
 % by finding the local extremum of the derivative of cumulative angle
 
 % 0.14 for synthetic, 0.085 for 296059 and 241004 
-threshold = 0.085;
+threshold = 0.3;
 corners_index = detectCorners(dcontourA, threshold);
 
 % display corners in image
@@ -89,10 +94,11 @@ title('Corner detection by finding local extreme of the derivative of cumulative
                                                    
 % chop contours at corners into segments
 segment = chopContourAtCorner(contour_clean, corners_index);
-segment_pixel = chopContourAtCorner(contour, corners_index);
+% segment_pixel = chopContourAtCorner(contour, corners_index);
 
 [segment, segmentInd] = filterContourWithFixedLength(segment, 2*hankel_size);
-segment_pixel = segment_pixel(segmentInd);
+% segment_pixel = segment_pixel(segmentInd);
+segment_pixel = [];
 
 numSeg = numel(segment); 
 
@@ -152,7 +158,8 @@ sorder(line_id) = 0;
 % sD = dynamicDistance(sHHp, 1:numSeg);
 % sk = 4;      % number of clusters
 sD = dynamicDistance(sHHp, 1:numSeg, sorder);
-sk = numel(unique(sorder));
+% sk = numel(unique(sorder));
+sk = 9;
 
 slabel = Ncuts(sD, sk, sorder);
 plotContoursFromImage(segment, segment_pixel, sk, slabel, imgSize, sL);
