@@ -1,5 +1,8 @@
 function y = mySubspaceAngle_vel(seg1,seg2,thr)
 
+D = size(seg1,2);
+assert(size(seg2,2)==D);
+
 % nr = 8;
 nc = 4;
 
@@ -18,7 +21,7 @@ v2 = diff(seg2);
 % v2 = conv2(seg2', DOG, 'valid')';
 
 % H1 = hankel_mo(v1',[nr size(v1,1)-nr/2+1]);
-H1 = hankel_mo(v1',[(size(v1,1)-nc+1)*2, nc]);
+H1 = hankel_mo(v1',[(size(v1,1)-nc+1)*D, nc]);
 % seg1 = seg1 - repmat(mean(seg1),size(seg1,1),1);
 % H1 = hankel_mo(seg1',[nr size(seg1,1)-nr/2+1]);
 
@@ -39,7 +42,7 @@ ind1 = [true;ind1(1:end-1)];
 
 
 % H2 = hankel_mo(v2',[nr size(v2,1)-nr/2+1]);
-H2 = hankel_mo(v2',[(size(v2,1)-nc+1)*2, nc]);
+H2 = hankel_mo(v2',[(size(v2,1)-nc+1)*D, nc]);
 % seg2 = seg2 -  repmat(mean(seg2),size(seg2,1),1);
 % H2 = hankel_mo(seg2',[nr size(seg2,1)-nr/2+1]);
 

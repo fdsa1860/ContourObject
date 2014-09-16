@@ -2,11 +2,14 @@ function y = myHankeletAngle(seg1,seg2,thr)
 
 %% my hankelet angle
 
+D = size(seg1,2);
+assert(size(seg2,2)==D);
+
 nr = 16;
 dc1 = kron(ones(nr/2,1),[1;0]);
 dc2 = kron(ones(nr/2,1),[0;1]);
 
-H1 = hankel_mo(seg1',[nr size(seg1,1)-nr/2+1]);
+H1 = hankel_mo(seg1',[nr size(seg1,1)-nr/D+1]);
 for i = 1:size(H1,2)
     temp = H1(:,i);
     temp = temp - (temp'*dc1)/(dc1'*dc1)*dc1 - (temp'*dc2)/(dc2'*dc2)*dc2;
@@ -15,7 +18,7 @@ for i = 1:size(H1,2)
 end
 H1 = H1/sqrt(size(H1,2));
 
-H2 = hankel_mo(seg2',[nr size(seg2,1)-nr/2+1]);
+H2 = hankel_mo(seg2',[nr size(seg2,1)-nr/D+1]);
 for i = 1:size(H2,2)
     temp = H2(:,i);
     temp = temp - (temp'*dc1)/(dc1'*dc1)*dc1 - (temp'*dc2)/(dc2'*dc2)*dc2;

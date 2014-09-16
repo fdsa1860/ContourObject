@@ -2,6 +2,7 @@
 close all;clear;clc;
 
 addpath(genpath('../3rdParty'));
+addpath(genpath('../matlab'));
     
 load('../expData/kidsImageSegment.mat');
 
