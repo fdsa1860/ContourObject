@@ -158,8 +158,8 @@ sorder(line_id) = 0;
 % sD = dynamicDistance(sHHp, 1:numSeg);
 % sk = 4;      % number of clusters
 sD = dynamicDistance(sHHp, 1:numSeg, sorder);
-% sk = numel(unique(sorder));
-sk = 9;
+sk = numel(unique(sorder));
+% sk = 9;
 
 slabel = Ncuts(sD, sk, sorder);
 plotContoursFromImage(segment, segment_pixel, sk, slabel, imgSize, sL);
