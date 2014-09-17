@@ -5,12 +5,12 @@ if nargin < 3
     order_info2 = [];
 end
 
-n = numel(HHp1);
-m = numel(HHp2);
+m = numel(HHp1);
+n = numel(HHp2);
 D = zeros(m, n);
 
-for i = 1:n
-    for j = 1:m
+for i = 1:m
+    for j = 1:n
         if isempty(order_info1) || isempty(order_info2)
             D(i, j) = abs(2 - norm(HHp1{i} + HHp2{j}, 'fro'));
         elseif order_info1(i) == 0 && order_info2(j) == 0
