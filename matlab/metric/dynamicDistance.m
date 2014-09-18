@@ -11,8 +11,11 @@
 % modified by Xikang Zhang on Sep. 6, 2014, to consider the special case of
 % lines, for which H contains all zeros
 
-function D = dynamicDistance(HHp, index, order_info)
+function D = dynamicDistance(HHp, index, order_info, alpha)
 
+if nargin < 4
+    alpha = 1;
+end
 if nargin < 3
     order_info = [];
 end
@@ -23,19 +26,14 @@ D = zeros(m, n);
 
 for i = 1:m
     for j = 1:n
-        if isempty(order_info) || order_info(index(i)) == order_info(j)
-            if order_info(index(i)) == 0 && order_info(j) == 0
+        if isempty(order_info)
+            D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
+        elseif order_info(index(i)) == 0 || order_info(j) == 0
                 D(i, j) = 0;
-            else
-                D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
-            end
         else
-            if order_info(index(i)) == 0 || order_info(j) == 0
-                D(i, j) = 1;
-            else
-                D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro')) + 1;
-            end
+                D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
         end
+        D(i, j) = D(i, j) + alpha * abs(order_info(index(i)) - order_info(j));
     end    
 end
 

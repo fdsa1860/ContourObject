@@ -132,7 +132,8 @@ segment = seg2;
 MEAN_THRES = 0.005;
 STD_THRES = 0.05;
 SUM_THRES = 0.5;
-NORM_THRES = 0.1;
+NORM_THRES = 0.04;
+dNORM_THRES = 0.1;
 % cluster the contour segments
 scA = cell(1, numSeg);         % cumulative angle for segments
 dscA = cell(1, numSeg);       % the derivative of cumulative angle for segments
@@ -141,6 +142,8 @@ norm_dscA = zeros(1, numSeg);
 abs_mean_dscA = zeros(1, numSeg);
 std_dscA = zeros(1, numSeg);
 abs_sum_dscA = zeros(1, numSeg);
+norm_scA = zeros(1, numSeg);
+od = zeros(1, numSeg);
 
 sH = cell(1, numSeg);
 sHHp = cell(1, numSeg);
@@ -154,9 +157,9 @@ for i = 1:numSeg
     [~, scA{i}, ~] = cumulativeAngle([segment{i}(:, 2) segment{i}(:, 1)]);
     dscA{i} = diff(scA{i});
     
-    %     % denoise feature
-    %     [dscA_tmp,~,~,R] = fast_incremental_hstln_mo(dscA{i}',0.3);
-    %     dscA{i} = dscA_tmp';
+    % denoise feature
+    [dscA_tmp,~,~,od(i)] = fast_incremental_hstln_mo(dscA{i}',0.01);
+    dscA{i} = dscA_tmp';
     
     % detect straight lines
     % 1 for synthetic, 0.8 for 296059 and 241004
@@ -164,7 +167,11 @@ for i = 1:numSeg
     std_dscA(i) = std(dscA{i});
     abs_sum_dscA(i) = abs(sum(dscA{i}));
     norm_dscA(i) = norm(dscA{i}, 2);
-    if abs_mean_dscA(i) < MEAN_THRES && std_dscA(i) < STD_THRES
+    norm_scA(i) = norm(scA{i})/length(scA{i});
+%     if od(i) == 1
+%     if  norm_scA(i) < NORM_THRES
+    if norm_dscA(i) < dNORM_THRES
+%     if abs_mean_dscA(i) < MEAN_THRES && std_dscA(i) < STD_THRES
         %     if abs_sum_dscA(i) < SUM_THRES && norm_dscA(i) < NORM_THRES
         line_id(nL) = i;
         nL = nL + 1;
@@ -173,7 +180,8 @@ for i = 1:numSeg
     [sH{i}, sHHp{i}] = buildHankel(dscA{i}, hankel_size, 1);
     
     % 0.9495 for synthetic, 0.99 for 296059, 0.98 for 241004
-    sorder(i) = getOrder(sH{i}, 0.95);
+%     sorder(i) = getOrder(sH{i}, 0.95);
+    sorder(i) = od(i);
 end
 
 % set the order of lines zero
