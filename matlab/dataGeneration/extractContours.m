@@ -35,7 +35,7 @@ for i = 1:numCont
         BW2(contour{i}(j, 1), contour{i}(j, 2)) = 1;
     end
 end
-figure, imshow(BW2);
+% figure, imshow(BW2);
 
 % imgSize = size(img);
 % hFig = figure;

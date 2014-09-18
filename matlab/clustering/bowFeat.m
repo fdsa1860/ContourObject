@@ -40,7 +40,7 @@ D = dynamicDistanceCross(Hx, Hc, order1, order2);
 % get BOW representation
 feat = zeros(K, 1);
 for i = 1:N
-    feat(ind(i)) = feat(ind(i)) + lx(ind(i));
+    feat(ind(i)) = feat(ind(i)) + lx(i);
 end
 
 % normalization
