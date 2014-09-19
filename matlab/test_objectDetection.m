@@ -94,7 +94,7 @@ end
 fprintf('Process finished!\n');
 toc
 
-save feat_20140918 feat;
+% save feat_20140918 feat;
 load feat_20140918
 %% bow representation
 % compute centers
