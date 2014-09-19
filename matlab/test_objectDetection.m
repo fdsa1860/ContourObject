@@ -39,68 +39,61 @@ labels = [posLabels negLabels];
 % imgList = [posList(1:100) negList(1:100)];
 % labels = [posLabels(1:100) negLabels(1:100)];
 
-%% load cluster centers
-% load('../expData/clusterCenters.mat');
-% rng(0);
-% sampleNum = 1000;
-% contourPoolMaxSize = 10000;
-% ri = randi(length(imgList), sampleNum, 1);
-% contourPool = cell(1, contourPoolMaxSize);
-% counter = 0;
-% for i = 1:length(ri)
-%     img = im2double(imread(imgList{ri(i)}));
+
+%% compute contours, then features
+% tic
+% numImg = length(imgList);
+% dscA_all = cell(1, numImg);
+% for i = 1:numImg
+%     img = im2double(imread(imgList{i}));
 %     dscA = img2dscA(img);
-%     nd = length(dscA);
-%     counterEnd = counter + nd;
-%     if counterEnd > contourPoolMaxSize
-%         break;
-%     end
-%     contourPool(counter+1:counterEnd) = dscA;
-%     counter = counterEnd;
+%     dscA_all{i} = dscA;
 %     fprintf('Processing image %d ... \n', i);
 % end
 % fprintf('Process finished!\n');
-% contourPool(counter+1:end) = [];
-% % save contourPool_0918 contourPool;
-% load('../expData/contourPool_0918.mat');
-% [contourPool, sorder, sH, sHHp] = orderEst(contourPool, hankel_size);
-% % save('contourPool_clean_0918', 'contourPool', 'sorder', 'sH', 'sHHp');
-% % load('../expData/contourPool_clean_0918', 'contourPool', 'sorder', 'sH', 'sHHp');
-% sD = dynamicDistance(sHHp, 1:length(sorder), sorder);
-% sk = numel(unique(sorder));
-% % % sk = 9;
-% sLabel = Ncuts(sD, sk, sorder);
-% centerInd = findCenters(sD,sLabel);
-% centers = contourPool(centerInd);
-% % save pedestrianCenters_20140918 centers;
-load ../expData/pedestrianCenters_20140918
+% toc
+% save dscA_all_raw_20140919 dscA_all;
+% load ../expData/dscA_all_raw_20140919
 
-%% compute contours, then features
-tic
+
+%% order estimation
+% numImg = length(dscA_all);
+% dscA_all_clean = cell(numImg, 1);
+% dscA_all_order = cell(numImg, 1);
+% dscA_all_H = cell(numImg, 1);
+% dscA_all_HH = cell(numImg, 1);
+% for i = 1:numImg
+%     [dscA_all_clean{i}, dscA_all_order{i}, dscA_all_H{i}, dscA_all_HH{i}] = orderEst(dscA_all{i}, hankel_size);
+%     fprintf('Processing image %d ... \n', i);
+% end
+% fprintf('Process finished!\n');
+% save dscA_all_clean_20140919 dscA_all_clean dscA_all_order dscA_all_H dscA_all_HH;
+load ../expData/dscA_all_clean_20140919
+
+
+%% computer cluster centers
+% sampleNum = 1000;
+% poolMaxSize = 10000;
+% [contourPool, poolOrder, poolH, poolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
+% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool, poolOrder, poolH, poolHH);
+% % save pedestrianCenters_20140919 centers centers_order centers_H centers_HH;
+load ../expData/pedestrianCenters_20140919
+
+
+%% bow representation
 nc = length(centers);
-numImg = length(imgList);
+numImg = length(dscA_all_clean);
 feat = zeros(nc, numImg);
 for i = 1:numImg
-    img = im2double(imread(imgList{i}));
-    dscA = img2dscA(img);
-    [dscA, sorder, sH, sHHp] = orderEst(dscA, hankel_size);
-    if isempty(dscA)
+    if isempty(dscA_all_clean{i})
         feat(:,i) = zeros(nc,1);
     else
-        feat(:,i) = bowFeat(dscA, centers);
+        feat(:,i) = bowFeatHH(dscA_all_HH{i}, centers_HH, dscA_all_order{i}, centers_order);
     end
-    fprintf('Processing image %d ... \n', i);
 end
-fprintf('Process finished!\n');
-toc
+% save feat_hOrder_20140919 feat;
+% load ../expData/feat_hOrder_20140919
 
-% save feat_20140918 feat;
-load feat_20140918
-%% bow representation
-% compute centers
-% cntrInd = findCenters(sD, slabel);
-% centers = dscA(cntrInd);
-% save cluster centers
 
 %% display
 

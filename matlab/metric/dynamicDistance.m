@@ -1,7 +1,7 @@
 % Calculate the dynamic distances between any two Hankel matrices
-% Input: 
-%    HHp: the normalized Hankel matrix 
-%    index: determine which ones as the referent index and then 
+% Input:
+%    HHp: the normalized Hankel matrix
+%    index: determine which ones as the referent index and then
 %              calculate the distances between the referent index and others
 %    order_info: the order information (the rank of H)
 % Output:
@@ -29,12 +29,12 @@ for i = 1:m
         if isempty(order_info)
             D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
         elseif order_info(index(i)) == 0 || order_info(j) == 0
-                D(i, j) = 0;
+            D(i, j) = 0;
         else
-                D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
+            D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
         end
         D(i, j) = D(i, j) + alpha * abs(order_info(index(i)) - order_info(j));
-    end    
+    end
 end
 
 end
