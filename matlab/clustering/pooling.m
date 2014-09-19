@@ -23,10 +23,10 @@ for i = 1:sampleNum
     if counterEnd > poolMaxSize,
         break;
     end
-    Y(counter+1:counterEnd) = X(ri(i));
+    Y(counter+1:counterEnd) = X{ri(i)};
     yOrder(counter+1:counterEnd) = xOrder{ri(i)};
-    yH(counter+1:counterEnd) = xH(ri(i));
-    yHH(counter+1:counterEnd) = xHH(ri(i));
+    yH(counter+1:counterEnd) = xH{ri(i)};
+    yHH(counter+1:counterEnd) = xHH{ri(i)};
     counter = counterEnd;
 end
 Y(counter+1:end) = [];

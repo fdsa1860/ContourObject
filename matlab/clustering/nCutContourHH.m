@@ -1,4 +1,4 @@
-function [label, centers, cOrder, cH, cHH, D, centerInd] = nCutContourHH(X, order, H, HH, k)
+function [label, centers, cOrder, cH, cHH, D, centerInd] = nCutContourHH(X, order, H, HH, k, D)
 % Input:
 % X: an N-by-1 cell vector, data to cluster
 % order: N-by-1 vector, the estimated order information of X
@@ -17,7 +17,10 @@ if nargin < 5
     k = numel(unique(order));
 end
 
-D = dynamicDistance(HH, 1:length(order), order);
+if nargin < 6
+    D = dynamicDistance(HH, 1:length(order), order);
+end
+
 label = Ncuts(D, k, order);
 
 centerInd = findCenters(D, label);

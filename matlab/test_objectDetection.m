@@ -72,12 +72,13 @@ load ../expData/dscA_all_clean_20140919
 
 
 %% computer cluster centers
-% sampleNum = 1000;
-% poolMaxSize = 10000;
-% [contourPool, poolOrder, poolH, poolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
-% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool, poolOrder, poolH, poolHH);
+sampleNum = 1000;
+poolMaxSize = 10000;
+nc = 10;
+[contourPool, poolOrder, poolH, poolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
+[sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool, poolOrder, poolH, poolHH, nc);
 % % save pedestrianCenters_20140919 centers centers_order centers_H centers_HH;
-load ../expData/pedestrianCenters_20140919
+% load ../expData/pedestrianCenters_20140919
 
 
 %% bow representation
