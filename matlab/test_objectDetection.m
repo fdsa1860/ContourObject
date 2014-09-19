@@ -2,11 +2,16 @@
 
 %% set up environment
 clc;clear;close all;
+addpath(genpath('../3rdParty'));
+addpath(genpath('../matlab'));
+
+hankel_size = 4;
+
 
 %% load data
 
 % load positive images to posList
-posDir = '/Users/xikang/Documents/data/INRIAPerson/mytrain/pos/';
+posDir = '../../../data/INRIAPerson/mytrain/pos/';
 % posList = importdata('/Users/xikang/Documents/data/INRIAPerson/train_64x128_H96/pos.lst');
 pfileList = dir(fullfile(posDir,'*.png'));
 np = length(pfileList);
@@ -18,7 +23,7 @@ end
 posLabels = ones(1, np);
 
 % load negative images to negList
-negDir = '/Users/xikang/Documents/data/INRIAPerson/mytrain/neg/';
+negDir = '../../../data/INRIAPerson/mytrain/neg/';
 nfileList = dir(fullfile(negDir,'*.png'));
 nn = length(nfileList);
 negList = cell(1, nn);
@@ -35,7 +40,7 @@ labels = [posLabels negLabels];
 % labels = [posLabels(1:100) negLabels(1:100)];
 
 %% load cluster centers
-load('../expData/clusterCenters.mat');
+% load('../expData/clusterCenters.mat');
 % rng(0);
 % sampleNum = 1000;
 % contourPoolMaxSize = 10000;
@@ -56,39 +61,40 @@ load('../expData/clusterCenters.mat');
 % end
 % fprintf('Process finished!\n');
 % contourPool(counter+1:end) = [];
+% % save contourPool_0918 contourPool;
 % load('../expData/contourPool_0918.mat');
-% hankel_size = 4;
 % [contourPool, sorder, sH, sHHp] = orderEst(contourPool, hankel_size);
-% save('contourPool_clean_0918', 'contourPool', 'sorder', 'sH', 'sHHp');
-% load('../expData/contourPool_clean_0918', 'contourPool', 'sorder', 'sH', 'sHHp');
+% % save('contourPool_clean_0918', 'contourPool', 'sorder', 'sH', 'sHHp');
+% % load('../expData/contourPool_clean_0918', 'contourPool', 'sorder', 'sH', 'sHHp');
 % sD = dynamicDistance(sHHp, 1:length(sorder), sorder);
 % sk = numel(unique(sorder));
-% % sk = 9;
+% % % sk = 9;
 % sLabel = Ncuts(sD, sk, sorder);
 % centerInd = findCenters(sD,sLabel);
 % centers = contourPool(centerInd);
-% save pedestrianCenters_20140918 centers;
+% % save pedestrianCenters_20140918 centers;
 load ../expData/pedestrianCenters_20140918
 
 %% compute contours, then features
-% tic
-% nc = length(centers);
-% numImg = length(imgList);
-% feat = zeros(nc, numImg);
-% for i = 1:numImg
-%     img = im2double(imread(imgList{i}));
-%     dscA = img2dscA(img);
-%     if isempty(dscA)
-%         feat(:,i) = zeros(nc,1);
-%     else
-%         feat(:,i) = bowFeat(dscA, centers);
-%     end
-%     fprintf('Processing image %d ... \n', i);
-% end
-% fprintf('Process finished!\n');
-% toc
+tic
+nc = length(centers);
+numImg = length(imgList);
+feat = zeros(nc, numImg);
+for i = 1:numImg
+    img = im2double(imread(imgList{i}));
+    dscA = img2dscA(img);
+    [dscA, sorder, sH, sHHp] = orderEst(dscA, hankel_size);
+    if isempty(dscA)
+        feat(:,i) = zeros(nc,1);
+    else
+        feat(:,i) = bowFeat(dscA, centers);
+    end
+    fprintf('Processing image %d ... \n', i);
+end
+fprintf('Process finished!\n');
+toc
 
-% save feat_20140918 feat;
+save feat_20140918 feat;
 load feat_20140918
 %% bow representation
 % compute centers
