@@ -23,7 +23,8 @@ end
 
 % figure, imshow(E);
 % figure, imshow(BW);
-contour = extractContBW(BW);
+% contour = extractContBW(BW);
+contour = extractContBW2(BW, E);
 
 % display contours
 numCont = numel(contour);

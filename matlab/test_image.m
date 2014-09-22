@@ -3,6 +3,8 @@ close all;clear;clc;
 addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
+
+
 % load image
 % img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
@@ -12,7 +14,11 @@ img = im2double(imread('../inputData/image/kids.png'));
 
 imgSize = size(img);
 
-% contour detection
+% parameters
+hankel_size = 4;
+minLen = 2*hankel_size+2;
+
+%% contour detection
 % 1 is Canny for synthetic image
 % 2 is Structured edge for natural image (P. Dollar's Method)
 contour = extractContours(img, 2);
@@ -20,7 +26,6 @@ contour = extractContours(img, 2);
 %%
 % rankminimization to reduce the effect of discretization
 Size = imgSize(1:2);
-hankel_size = 4;
 lambda = 5;
 contour_clean = rankminimize(contour, hankel_size, Size, lambda);
 
@@ -28,6 +33,7 @@ contour_clean = rankminimize(contour, hankel_size, Size, lambda);
 mode = 1; % fixed length
 fixedLen = 1;
 contour_clean = sampleAlongCurve(contour_clean, mode, fixedLen);
+contour_clean = filterContourWithFixedLength(contour_clean, minLen);
 
 %% Contour trajectories clustering
 
@@ -96,7 +102,7 @@ title('Corner detection by finding local extreme of the derivative of cumulative
 segment = chopContourAtCorner(contour_clean, corners_index);
 % segment_pixel = chopContourAtCorner(contour, corners_index);
 
-[segment, segmentInd] = filterContourWithFixedLength(segment, 2*hankel_size);
+[segment, segmentInd] = filterContourWithFixedLength(segment, minLen);
 % segment_pixel = segment_pixel(segmentInd);
 segment_pixel = [];
 
@@ -183,23 +189,30 @@ for i = 1:numSeg
     
     % 0.9495 for synthetic, 0.99 for 296059, 0.98 for 241004
 %     sorder(i) = getOrder(sH{i}, 0.95);
-%     sorder(i) = od(i);
+    sorder(i) = od(i);
     sigma(:, i) = svd(sH{i});
     sigma(:, i) = sigma(:, i) / sigma(1, i);
 end
 
 % set the order of lines zero
-% sorder(line_id) = 0;
+sorder(line_id) = 0;
 sigma(:, line_id) = 0;
 
 % sD = dynamicDistance(sHHp, 1:numSeg);
 % sk = 4;      % number of clusters
 % sD = dynamicDistance(sHHp, 1:numSeg, sorder);
-sD = dynamicDistanceSigma(sHHp, 1:numSeg, sigma,100);
+sD = dynamicDistanceSigma(sHHp, 1:numSeg, sigma);
 % sk = numel(unique(sorder));
-sk = 5;
+sk = 6;
 
-slabel = Ncuts(sD, sk, sorder);
+% slabel = Ncuts(sD, sk, sorder);
+% W = exp(-sD);     % the similarity matrix
+% NcutDiscrete = ncutW(W, sk);
+% slabel = sortLabel_order(NcutDiscrete, sorder);
+W = exp(-sD);     % the similarity matrix
+NcutDiscrete = ncutW(W, sk);
+slabel = sortLabel_sigma(NcutDiscrete, sigma);
+
 plotContoursFromImage(segment, segment_pixel, sk, slabel, imgSize, sL);
 title(['Number of class: ' num2str(sk) ', Feature: cumulative angle'], 'FontSize', 12);
 

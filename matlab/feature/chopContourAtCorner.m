@@ -2,7 +2,7 @@
  
 function segment = chopContourAtCorner(contour, corners_index)
 
-r = 5;            % the radius of influence of corners
+r = 1;            % the radius of influence of corners
 count = 1;
 segment = {};
 
