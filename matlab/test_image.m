@@ -71,7 +71,7 @@ title(['Number of class: ' num2str(k) ', Feature: cumulative angle'], 'FontSize'
 % by finding the local extremum of the derivative of cumulative angle
 
 % 0.14 for synthetic, 0.085 for 296059 and 241004
-threshold = 0.3;
+threshold = 0.4;
 corners_index = detectCorners(dcontourA, threshold);
 
 % display corners in image
