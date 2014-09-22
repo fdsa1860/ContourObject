@@ -8,6 +8,7 @@ addpath(genpath('../matlab'));
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
 % img = im2double(imread('../inputData/image/241004.jpg'));
 img = im2double(imread('../inputData/image/kids.png'));
+% img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
 
 imgSize = size(img);
 
@@ -148,6 +149,7 @@ od = zeros(1, numSeg);
 sH = cell(1, numSeg);
 sHHp = cell(1, numSeg);
 sorder = zeros(1, numSeg);
+sigma = zeros(hankel_size, numSeg);
 
 nL = 1;
 line_id = [];         % the index of straight lines
@@ -181,17 +183,21 @@ for i = 1:numSeg
     
     % 0.9495 for synthetic, 0.99 for 296059, 0.98 for 241004
 %     sorder(i) = getOrder(sH{i}, 0.95);
-    sorder(i) = od(i);
+%     sorder(i) = od(i);
+    sigma(:, i) = svd(sH{i});
+    sigma(:, i) = sigma(:, i) / sigma(1, i);
 end
 
 % set the order of lines zero
-sorder(line_id) = 0;
+% sorder(line_id) = 0;
+sigma(:, line_id) = 0;
 
 % sD = dynamicDistance(sHHp, 1:numSeg);
 % sk = 4;      % number of clusters
-sD = dynamicDistance(sHHp, 1:numSeg, sorder);
-sk = numel(unique(sorder));
-% sk = 9;
+% sD = dynamicDistance(sHHp, 1:numSeg, sorder);
+sD = dynamicDistanceSigma(sHHp, 1:numSeg, sigma,100);
+% sk = numel(unique(sorder));
+sk = 5;
 
 slabel = Ncuts(sD, sk, sorder);
 plotContoursFromImage(segment, segment_pixel, sk, slabel, imgSize, sL);
