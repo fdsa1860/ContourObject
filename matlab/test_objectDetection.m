@@ -6,13 +6,16 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
 hankel_size = 4;
+alpha = 0;
 
+opt = 'mytrain';
+% opt = 'mytest';
 
 %% load data
 
 % load positive images to posList
-% posDir = '../../../data/INRIAPerson/mytrain/pos/';
-posDir = '../../../data/INRIAPerson/mytest/pos/';
+posDir = sprintf('../../../data/INRIAPerson/%s/pos/',opt);
+
 pfileList = dir(fullfile(posDir,'*.png'));
 np = length(pfileList);
 posList = cell(1, np);
@@ -23,8 +26,7 @@ end
 posLabels = ones(1, np);
 
 % load negative images to negList
-% negDir = '../../../data/INRIAPerson/mytrain/neg/';
-negDir = '../../../data/INRIAPerson/mytest/neg/';
+negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 nfileList = dir(fullfile(negDir,'*.png'));
 nn = length(nfileList);
 negList = cell(1, nn);
@@ -69,23 +71,23 @@ labels = [posLabels negLabels];
 % end
 % fprintf('Process finished!\n');
 % save dscA_mytest_clean_20140924 dscA_all_clean dscA_all_order dscA_all_H dscA_all_HH;
-load ../expData/dscA_mytest_clean_20140924
-% load ../expData/dscA_mytrain_clean_20140919
+load ../expData/dscA_mytrain_clean_20140919
+% load ../expData/dscA_mytest_clean_20140924
 
 %% pooling
 % sampleNum = 10000;
 % poolMaxSize = 50000;
 % [contourPool, poolOrder, poolH, poolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
 % save contourPool_20140925 contourPool poolOrder poolH poolHH;
-% load ../expData/contourPool_20140925;
+load ../expData/contourPool_20140925;
 
 %% computer cluster centers
-% nc = 8;
+% nc = 10;
 % tic;
-% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool(1:30000), poolOrder(1:30000), poolH(1:30000), poolHH(1:30000), nc);
+% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool(1:10000), poolOrder(1:10000), poolH(1:10000), poolHH(1:10000), nc, alpha);
 % toc
-% save pedestrianCenters_20140925 centers centers_order centers_H centers_HH sD centerInd sLabel;
-load ../expData/pedestrianCenters_20140925
+% save pedestrianCenters_a0_20140925 centers centers_order centers_H centers_HH sD centerInd sLabel;
+load ../expData/pedestrianCenters_a0_20140925
 
 %% bow representation
 % nc = length(centers);
@@ -95,13 +97,13 @@ load ../expData/pedestrianCenters_20140925
 %     if isempty(dscA_all_HH{i})
 %         feat(:,i) = zeros(nc,1);
 %     else
-%         feat(:,i) = bowFeatHH(dscA_all_HH{i}, centers_HH, dscA_all_order{i}, centers_order);
+%         feat(:,i) = bowFeatHH(dscA_all_HH{i}, centers_HH, dscA_all_order{i}, centers_order, alpha);
 %     end
 % end
-% save feat_mytrain_hOrder_20140925 feat labels;
-% load ../expData/feat_mytrain_hOrder_20140925
-% save feat_mytest_hOrder_20140925 feat labels;
-% load ../expData/feat_mytest_hOrder_20140925
+% save feat_mytrain_hOrder_a0_20140925 feat labels;
+% load ../expData/feat_mytrain_hOrder_a0_20140925
+% save feat_mytest_hOrder_a0_20140925 feat labels;
+% load ../expData/feat_mytest_hOrder_a0_20140925
 
 
 %% display
@@ -120,12 +122,12 @@ addpath(genpath('../3rdParty/liblinear-1.94/matlab'));
 % feat = feat(:,1:4832);
 % labels = labels(1:4832);
 
-load ../expData/feat_mytrain_hOrder_20140925;
+load ../expData/feat_mytrain_hOrder_a0_20140925;
 X_train = feat;
 y_train = labels;
 % X_train = feat(:,1:4832);
 % y_train = labels(1:4832);
-load ../expData/feat_mytest_hOrder_20140925;
+load ../expData/feat_mytest_hOrder_a0_20140925;
 X_test = feat;
 y_test = labels;
     

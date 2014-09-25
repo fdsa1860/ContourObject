@@ -1,11 +1,16 @@
-function feat = bowFeatHH(HH1, HH2, order1, order2)
+function feat = bowFeatHH(HH1, HH2, order1, order2, alpha)
 % Input:
 % HH1: 1 by N cell, data to be represented
 % HH2: 1 by K cell, cluster centers
 % order1: 1 by N vector
 % order2: 1 by K vector
+% alpha: the weight of order in distance metric
 % Output:
 % feat: bag of words representation
+
+if nargin < 5
+    alpha = 1;
+end
 
 % get the length of X samples as weights
 N = length(HH1);
@@ -17,7 +22,7 @@ for i = 1:N
 end
 
 % get distance matrix D
-D = dynamicDistanceCross(HH1, HH2, order1, order2);
+D = dynamicDistanceCross(HH1, HH2, order1, order2, alpha);
 
 [val,ind] = min(D, [], 2);
 

@@ -1,4 +1,4 @@
-function [label, centers, cOrder, cH, cHH, D, centerInd] = nCutContourHH(X, order, H, HH, k, D)
+function [label, centers, cOrder, cH, cHH, D, centerInd] = nCutContourHH(X, order, H, HH, k, alpha, D)
 % Input:
 % X: an N-by-1 cell vector, data to cluster
 % order: N-by-1 vector, the estimated order information of X
@@ -18,7 +18,11 @@ if nargin < 5
 end
 
 if nargin < 6
-    D = dynamicDistance(HH, 1:length(order), order, 0.01);
+    alpha = 1;
+end
+
+if nargin < 7
+    D = dynamicDistance(HH, 1:length(order), order, alpha);
 end
 
 W = exp(-D);     % the similarity matrix

@@ -1,4 +1,4 @@
-function dscA = img2dscA(img)
+function [dscA, segment] = img2dscA(img)
 
 
 imgSize = size(img);

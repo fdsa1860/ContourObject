@@ -2,6 +2,11 @@
 
 function showContours(data, k, label)
 
+if nargin < 2
+    k = 1;
+    label = ones(length(data), 1);
+end
+
 nEach = histc(label, 1 : k);
 
 c = lines(7);     % colorspace

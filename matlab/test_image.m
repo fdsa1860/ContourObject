@@ -9,8 +9,8 @@ addpath(genpath('../matlab'));
 % img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
 % img = im2double(imread('../inputData/image/241004.jpg'));
-img = im2double(imread('../inputData/image/kids.png'));
-% img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
+% img = im2double(imread('../inputData/image/kids.png'));
+img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
 
 imgSize = size(img);
 
@@ -203,15 +203,14 @@ sigma(:, line_id) = 0;
 sD = dynamicDistance(sHHp, 1:numSeg, sorder);
 % sD = dynamicDistanceSigma(sHHp, 1:numSeg, sigma);
 % sk = numel(unique(sorder));
-sk = 6;
+sk = 10;
 
 % slabel = Ncuts(sD, sk, sorder);
-% W = exp(-sD);     % the similarity matrix
-% NcutDiscrete = ncutW(W, sk);
-% slabel = sortLabel_order(NcutDiscrete, sorder);
 W = exp(-sD);     % the similarity matrix
 NcutDiscrete = ncutW(W, sk);
-slabel = sortLabel_sigma(NcutDiscrete, sigma);
+slabel = sortLabel_order(NcutDiscrete, sorder);
+% slabel = sortLabel_sigma(NcutDiscrete, sigma);
+centerInd = findCenters(sD, slabel);
 
 plotContoursFromImage(segment, segment_pixel, sk, slabel, imgSize, sL);
 title(['Number of class: ' num2str(sk) ', Feature: cumulative angle'], 'FontSize', 12);

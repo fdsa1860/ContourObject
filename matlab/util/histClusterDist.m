@@ -10,11 +10,13 @@ for i = 1:nc
 end
 
 if show
-    colorseq = 'bgrmcykbgrmcykbgrmcyk';
+%     colorseq = 'bgrmcykbgrmcykbgrmcyk';
+    colorseq = jet(256);
     figure;
     hold on;
     for i = 1:length(h)
-        plot(t, h{i}, colorseq(i));
+%         plot(t, h{i}, colorseq(i));
+        plot(t, h{i}, 'Color', colorseq(i,:));
     end
     hold off;
 end
