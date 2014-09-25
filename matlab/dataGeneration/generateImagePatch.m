@@ -1,8 +1,12 @@
 function generateImagePatch
 
-negDir = '../../../../data/INRIAPerson/train_64x128_H96/neg/';
+% negDir = '../../../../data/INRIAPerson/train_64x128_H96/neg/';
+% fileList = dir(fullfile(negDir,'*.png'));
+% outputDir = '../../../../data/INRIAPerson/mytrain/neg/';
+
+negDir = '../../../../data/INRIAPerson/test_64x128_H96/neg/';
 fileList = dir(fullfile(negDir,'*.png'));
-outputDir = '../../../../data/INRIAPerson/mytrain/neg/';
+outputDir = '../../../../data/INRIAPerson/mytest/neg/';
 
 % set random seed
 rng(0);

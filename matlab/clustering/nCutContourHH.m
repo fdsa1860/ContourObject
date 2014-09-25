@@ -18,10 +18,12 @@ if nargin < 5
 end
 
 if nargin < 6
-    D = dynamicDistance(HH, 1:length(order), order);
+    D = dynamicDistance(HH, 1:length(order), order, 0.01);
 end
 
-label = Ncuts(D, k, order);
+W = exp(-D);     % the similarity matrix
+NcutDiscrete = ncutW(W, k);
+label = sortLabel_order(NcutDiscrete, order);
 
 centerInd = findCenters(D, label);
 centers = X(centerInd);

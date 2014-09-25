@@ -200,8 +200,8 @@ sigma(:, line_id) = 0;
 
 % sD = dynamicDistance(sHHp, 1:numSeg);
 % sk = 4;      % number of clusters
-% sD = dynamicDistance(sHHp, 1:numSeg, sorder);
-sD = dynamicDistanceSigma(sHHp, 1:numSeg, sigma);
+sD = dynamicDistance(sHHp, 1:numSeg, sorder);
+% sD = dynamicDistanceSigma(sHHp, 1:numSeg, sigma);
 % sk = numel(unique(sorder));
 sk = 6;
 

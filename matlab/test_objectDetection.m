@@ -11,8 +11,8 @@ hankel_size = 4;
 %% load data
 
 % load positive images to posList
-posDir = '../../../data/INRIAPerson/mytrain/pos/';
-% posList = importdata('/Users/xikang/Documents/data/INRIAPerson/train_64x128_H96/pos.lst');
+% posDir = '../../../data/INRIAPerson/mytrain/pos/';
+posDir = '../../../data/INRIAPerson/mytest/pos/';
 pfileList = dir(fullfile(posDir,'*.png'));
 np = length(pfileList);
 posList = cell(1, np);
@@ -23,7 +23,8 @@ end
 posLabels = ones(1, np);
 
 % load negative images to negList
-negDir = '../../../data/INRIAPerson/mytrain/neg/';
+% negDir = '../../../data/INRIAPerson/mytrain/neg/';
+negDir = '../../../data/INRIAPerson/mytest/neg/';
 nfileList = dir(fullfile(negDir,'*.png'));
 nn = length(nfileList);
 negList = cell(1, nn);
@@ -52,8 +53,8 @@ labels = [posLabels negLabels];
 % end
 % fprintf('Process finished!\n');
 % toc
-% save dscA_all_raw_20140919 dscA_all;
-% load ../expData/dscA_all_raw_20140919
+% save dscA_mytest_raw_20140924 dscA_all;
+% load ../expData/dscA_mytest_raw_20140924
 
 
 %% order estimation
@@ -67,33 +68,40 @@ labels = [posLabels negLabels];
 %     fprintf('Processing image %d ... \n', i);
 % end
 % fprintf('Process finished!\n');
-% save dscA_all_clean_20140919 dscA_all_clean dscA_all_order dscA_all_H dscA_all_HH;
-load ../expData/dscA_all_clean_20140919
+% save dscA_mytest_clean_20140924 dscA_all_clean dscA_all_order dscA_all_H dscA_all_HH;
+load ../expData/dscA_mytest_clean_20140924
+% load ../expData/dscA_mytrain_clean_20140919
 
+%% pooling
+% sampleNum = 10000;
+% poolMaxSize = 50000;
+% [contourPool, poolOrder, poolH, poolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
+% save contourPool_20140925 contourPool poolOrder poolH poolHH;
+% load ../expData/contourPool_20140925;
 
 %% computer cluster centers
-sampleNum = 1000;
-poolMaxSize = 10000;
-nc = 10;
-[contourPool, poolOrder, poolH, poolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
-[sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool, poolOrder, poolH, poolHH, nc);
-% % save pedestrianCenters_20140919 centers centers_order centers_H centers_HH;
-% load ../expData/pedestrianCenters_20140919
-
+% nc = 8;
+% tic;
+% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool(1:30000), poolOrder(1:30000), poolH(1:30000), poolHH(1:30000), nc);
+% toc
+% save pedestrianCenters_20140925 centers centers_order centers_H centers_HH sD centerInd sLabel;
+load ../expData/pedestrianCenters_20140925
 
 %% bow representation
-nc = length(centers);
-numImg = length(dscA_all_clean);
-feat = zeros(nc, numImg);
-for i = 1:numImg
-    if isempty(dscA_all_clean{i})
-        feat(:,i) = zeros(nc,1);
-    else
-        feat(:,i) = bowFeatHH(dscA_all_HH{i}, centers_HH, dscA_all_order{i}, centers_order);
-    end
-end
-% save feat_hOrder_20140919 feat;
-% load ../expData/feat_hOrder_20140919
+% nc = length(centers);
+% numImg = length(dscA_all_HH);
+% feat = zeros(nc, numImg);
+% for i = 1:numImg
+%     if isempty(dscA_all_HH{i})
+%         feat(:,i) = zeros(nc,1);
+%     else
+%         feat(:,i) = bowFeatHH(dscA_all_HH{i}, centers_HH, dscA_all_order{i}, centers_order);
+%     end
+% end
+% save feat_mytrain_hOrder_20140925 feat labels;
+% load ../expData/feat_mytrain_hOrder_20140925
+% save feat_mytest_hOrder_20140925 feat labels;
+% load ../expData/feat_mytest_hOrder_20140925
 
 
 %% display
@@ -109,15 +117,26 @@ addpath(genpath('../3rdParty/liblinear-1.94/matlab'));
 % X_test = feat_perm(:,151:200);
 % y_train = labels_perm(1:150);
 % y_test = labels_perm(151:200);
+% feat = feat(:,1:4832);
+% labels = labels(1:4832);
 
-K = 5;
-ind = crossvalind('Kfold',length(labels),K);
-accuracyCross = zeros(1, K);
-for k = 1:K
-    X_train = feat(:,ind~=k);
-    X_test = feat(:,ind==k);
-    y_train = labels(ind~=k);
-    y_test = labels(ind==k);
+load ../expData/feat_mytrain_hOrder_20140925;
+X_train = feat;
+y_train = labels;
+% X_train = feat(:,1:4832);
+% y_train = labels(1:4832);
+load ../expData/feat_mytest_hOrder_20140925;
+X_test = feat;
+y_test = labels;
+    
+% K = 5;
+% ind = crossvalind('Kfold',length(labels),K);
+% accuracyCross = zeros(1, K);
+% for k = 1:K
+%     X_train = feat(:,ind~=k);
+%     X_test = feat(:,ind==k);
+%     y_train = labels(ind~=k);
+%     y_test = labels(ind==k);
     
     % Cind = -1:10;
     % C = 2.^Cind;
@@ -133,6 +152,6 @@ for k = 1:K
         fprintf('\naccuracy is %f\n',mean(accuracy));
         accuracyMat(ci) = mean(accuracy);
     end
-    accuracyCross(k) = accuracy;
-end
+%     accuracyCross(k) = accuracy;
+% end
 rmpath(genpath('../3rdParty/liblinear-1.94/matlab'));

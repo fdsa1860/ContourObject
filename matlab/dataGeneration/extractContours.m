@@ -21,8 +21,8 @@ elseif method == 2    % Structure edge
     BW = im2double(im2bw(E, 0.1));
 end
 
-figure, imshow(E);
-figure, imshow(BW);
+% figure, imshow(E);
+% figure, imshow(BW);
 % contour = extractContBW(BW);
 contour = extractContBW2(BW, E);
 
