@@ -57,8 +57,10 @@ for i = 1:numImg
 end
 fprintf('Process finished!\n');
 toc
-% save dscA_mytest_raw_20140924 dscA_all;
-% load ../expData/dscA_mytest_raw_20140924
+save dscASeg_mytrain_raw_20140926 dscA_all seg_all;
+load ../expData/dscASeg_mytrain_raw_20140926
+% save dscASeg_mytest_raw_20140926 dscA_all seg_all;
+% load ../expData/dscA_mytest_raw_20140926
 
 
 %% order estimation
