@@ -44,7 +44,7 @@ segment = chopContourAtCorner(contour_clean, corners_index);
 numSeg = numel(segment);
 % hstln denoise
 seg2 = cell(1, numSeg);
-eta_thr = 0.6;
+eta_thr = 0.1;
 for i = 1:numSeg
     [seg_tmp,~,~,R] = fast_incremental_hstln_mo(segment{i}',eta_thr);
     seg2{i} = seg_tmp';

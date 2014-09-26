@@ -44,17 +44,19 @@ labels = [posLabels negLabels];
 
 
 %% compute contours, then features
-% tic
-% numImg = length(imgList);
-% dscA_all = cell(1, numImg);
-% for i = 1:numImg
-%     img = im2double(imread(imgList{i}));
-%     dscA = img2dscA(img);
-%     dscA_all{i} = dscA;
-%     fprintf('Processing image %d ... \n', i);
-% end
-% fprintf('Process finished!\n');
-% toc
+tic
+numImg = length(imgList);
+dscA_all = cell(1, numImg);
+seg_all = cell(1, numImg);
+for i = 1:numImg
+    img = im2double(imread(imgList{i}));
+    [dscA, seg] = img2dscA(img);
+    dscA_all{i} = dscA;
+    seg_all{i} = seg;
+    fprintf('Processing image %d ... \n', i);
+end
+fprintf('Process finished!\n');
+toc
 % save dscA_mytest_raw_20140924 dscA_all;
 % load ../expData/dscA_mytest_raw_20140924
 
