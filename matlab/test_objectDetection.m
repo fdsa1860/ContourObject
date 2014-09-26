@@ -44,70 +44,77 @@ labels = [posLabels negLabels];
 
 
 %% compute contours, then features
-tic
-numImg = length(imgList);
-dscA_all = cell(1, numImg);
-seg_all = cell(1, numImg);
-for i = 1:numImg
-    img = im2double(imread(imgList{i}));
-    [dscA, seg] = img2dscA(img);
-    dscA_all{i} = dscA;
-    seg_all{i} = seg;
-    fprintf('Processing image %d ... \n', i);
-end
-fprintf('Process finished!\n');
-toc
-save dscASeg_mytrain_raw_20140926 dscA_all seg_all;
+% tic
+% numImg = length(imgList);
+% dscA_all = cell(1, numImg);
+% seg_all = cell(1, numImg);
+% for i = 1:numImg
+%     img = im2double(imread(imgList{i}));
+%     [dscA, seg] = img2dscA(img);
+%     dscA_all{i} = dscA;
+%     seg_all{i} = seg;
+%     fprintf('Processing image %d ... \n', i);
+% end
+% fprintf('Process finished!\n');
+% toc
+% save dscASeg_mytrain_raw_20140926 dscA_all seg_all;
 load ../expData/dscASeg_mytrain_raw_20140926
 % save dscASeg_mytest_raw_20140926 dscA_all seg_all;
 % load ../expData/dscA_mytest_raw_20140926
 
 
 %% order estimation
-% numImg = length(dscA_all);
-% dscA_all_clean = cell(numImg, 1);
-% dscA_all_order = cell(numImg, 1);
-% dscA_all_H = cell(numImg, 1);
-% dscA_all_HH = cell(numImg, 1);
-% for i = 1:numImg
-%     [dscA_all_clean{i}, dscA_all_order{i}, dscA_all_H{i}, dscA_all_HH{i}] = orderEst(dscA_all{i}, hankel_size);
-%     fprintf('Processing image %d ... \n', i);
-% end
-% fprintf('Process finished!\n');
-% save dscA_mytest_clean_20140924 dscA_all_clean dscA_all_order dscA_all_H dscA_all_HH;
-load ../expData/dscA_mytrain_clean_20140919
+% [dscA_all_order, dscA_all_clean] = orderEstAll(dscA_all, true);
+% save dscA_mytrain_clean_20140926 dscA_all_order dscA_all_clean 
+load ../expData/dscA_mytrain_clean_20140926
+% save dscA_mytest_clean_20140926 dscA_all_order dscA_all_clean;
 % load ../expData/dscA_mytest_clean_20140924
+
+% [seg_all_order, seg_all_clean] = orderEstAll(seg_all, true);
+% save seg_mytrain_clean_20140926 seg_all_order seg_all_clean;
+load ../expData/seg_mytrain_clean_20140926;
+
+%% build hankel matrix
+% [dscA_all_H, dscA_all_HH] = buildHankelAll(dscA_all_clean, hankel_size, 1);
+% [seg_all_H, seg_all_HH] = buildHankelAll(seg_all_clean, hankel_size, 1);
+% save HH_mytrain_20140926 dscA_all_H dscA_all_HH seg_all_H seg_all_HH;
+load ../expData/HH_mytrain_20140926;
 
 %% pooling
 % sampleNum = 10000;
 % poolMaxSize = 50000;
-% [contourPool, poolOrder, poolH, poolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
-% save contourPool_20140925 contourPool poolOrder poolH poolHH;
-load ../expData/contourPool_20140925;
+% [dscAPool, dscAPoolOrder, dscAPoolH, dscAPoolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
+% save dscAPool_20140926 dscAPool dscAPoolOrder dscAPoolH dscAPoolHH;
+load ../expData/dscAPool_20140926;
+% [segPool, segPoolOrder, segPoolH, segPoolHH] = pooling(seg_all_clean, seg_all_order, seg_all_H, seg_all_HH, sampleNum, poolMaxSize);
+% save segPool_20140926 segPool segPoolOrder segPoolH segPoolHH;
+load ../expData/segPool_20140926;
 
 %% computer cluster centers
 % nc = 10;
 % tic;
-% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(contourPool(1:10000), poolOrder(1:10000), poolH(1:10000), poolHH(1:10000), nc, alpha);
+% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(dscAPool(1:10000), dscAPoolOrder(1:10000), dscAPoolH(1:10000), dscAPoolHH(1:10000), nc, alpha);
 % toc
-% save pedestrianCenters_a0_20140925 centers centers_order centers_H centers_HH sD centerInd sLabel;
-load ../expData/pedestrianCenters_a0_20140925
+% save pedestrianCenters_a0_20140926 centers centers_order centers_H centers_HH sD centerInd sLabel;
+% load ../expData/pedestrianCenters_a0_20140926
+% nc = 300;
+% tic;
+% load ../expData/pedestrianCenters_seg_a0_20140926
+% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(segPool(1:10000), segPoolOrder(1:10000), segPoolH(1:10000), segPoolHH(1:10000), nc, alpha, sD);
+% toc
+% save centers_seg_w300_a0_20140926 centers centers_order centers_H centers_HH sD centerInd sLabel;
+load ../expData/centers_seg_w300_a0_20140926;
 
 %% bow representation
-% nc = length(centers);
-% numImg = length(dscA_all_HH);
-% feat = zeros(nc, numImg);
-% for i = 1:numImg
-%     if isempty(dscA_all_HH{i})
-%         feat(:,i) = zeros(nc,1);
-%     else
-%         feat(:,i) = bowFeatHH(dscA_all_HH{i}, centers_HH, dscA_all_order{i}, centers_order, alpha);
-%     end
-% end
+% feat = bowFeatHHAll(dscA_all_HH, centers_HH, dscA_all_order, centers_order, alpha);
 % save feat_mytrain_hOrder_a0_20140925 feat labels;
 % load ../expData/feat_mytrain_hOrder_a0_20140925
 % save feat_mytest_hOrder_a0_20140925 feat labels;
 % load ../expData/feat_mytest_hOrder_a0_20140925
+
+% feat = bowFeatHHAll(seg_all_HH, centers_HH, seg_all_order, centers_order, alpha);
+% save feat_seg_mytrain_hOrder_a0_20140926 feat labels;
+load ../expData/feat_seg_mytrain_hOrder_a0_20140926;
 
 
 %% display
@@ -126,23 +133,23 @@ addpath(genpath('../3rdParty/liblinear-1.94/matlab'));
 % feat = feat(:,1:4832);
 % labels = labels(1:4832);
 
-load ../expData/feat_mytrain_hOrder_a0_20140925;
+% load ../expData/feat_mytrain_hOrder_a0_20140925;
 X_train = feat;
 y_train = labels;
 % X_train = feat(:,1:4832);
 % y_train = labels(1:4832);
-load ../expData/feat_mytest_hOrder_a0_20140925;
-X_test = feat;
-y_test = labels;
+% load ../expData/feat_mytest_hOrder_a0_20140925;
+% X_test = feat;
+% y_test = labels;
     
-% K = 5;
-% ind = crossvalind('Kfold',length(labels),K);
-% accuracyCross = zeros(1, K);
-% for k = 1:K
-%     X_train = feat(:,ind~=k);
-%     X_test = feat(:,ind==k);
-%     y_train = labels(ind~=k);
-%     y_test = labels(ind==k);
+K = 5;
+ind = crossvalind('Kfold',length(labels),K);
+accuracyCross = zeros(1, K);
+for k = 1:K
+    X_train = feat(:,ind~=k);
+    X_test = feat(:,ind==k);
+    y_train = labels(ind~=k);
+    y_test = labels(ind==k);
     
     % Cind = -1:10;
     % C = 2.^Cind;
@@ -158,6 +165,6 @@ y_test = labels;
         fprintf('\naccuracy is %f\n',mean(accuracy));
         accuracyMat(ci) = mean(accuracy);
     end
-%     accuracyCross(k) = accuracy;
-% end
+    accuracyCross(k) = accuracy;
+end
 rmpath(genpath('../3rdParty/liblinear-1.94/matlab'));

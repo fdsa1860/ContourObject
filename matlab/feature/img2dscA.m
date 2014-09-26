@@ -9,6 +9,7 @@ imgSize = size(img);
 contour = extractContours(img, 2);
 if isempty(contour)
     dscA = [];
+    segment = [];
     return;
 end
 
