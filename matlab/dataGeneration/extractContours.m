@@ -7,7 +7,7 @@
 %    contour: the cell array of contours
 
 
-function contour = extractContours(img, method)
+function contour = extractContours(img, method, draw)
 
 % choose the method of edge detection
 if method == 1         % Canny
@@ -21,8 +21,10 @@ elseif method == 2    % Structure edge
     BW = im2double(im2bw(E, 0.1));
 end
 
-% figure, imshow(E);
-% figure, imshow(BW);
+if draw
+    figure, imshow(E);
+    figure, imshow(BW);
+end
 % contour = extractContBW(BW);
 contour = extractContBW2(BW, E);
 

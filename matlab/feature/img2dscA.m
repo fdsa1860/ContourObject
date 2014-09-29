@@ -1,12 +1,15 @@
-function [dscA, segment] = img2dscA(img)
+function [dscA, segment] = img2dscA(img, draw)
 
+if nargin < 2
+    draw = false;
+end
 
 imgSize = size(img);
 
 % contour detection
 % 1 is Canny for synthetic image
 % 2 is Structured edge for natural image (P. Dollar's Method)
-contour = extractContours(img, 2);
+contour = extractContours(img, 2, draw);
 if isempty(contour)
     dscA = [];
     segment = [];

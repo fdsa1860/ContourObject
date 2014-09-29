@@ -6,7 +6,7 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
 hankel_size = 4;
-alpha = 0;
+alpha = 0.01;
 
 opt = 'mytrain';
 % opt = 'mytest';
@@ -48,9 +48,10 @@ labels = [posLabels negLabels];
 % numImg = length(imgList);
 % dscA_all = cell(1, numImg);
 % seg_all = cell(1, numImg);
-% for i = 1:numImg
+% % for i = 1:numImg
+% for i = 1
 %     img = im2double(imread(imgList{i}));
-%     [dscA, seg] = img2dscA(img);
+%     [dscA, seg] = img2dscA(img, true);
 %     dscA_all{i} = dscA;
 %     seg_all{i} = seg;
 %     fprintf('Processing image %d ... \n', i);
@@ -96,14 +97,14 @@ load ../expData/segPool_20140926;
 % [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(dscAPool(1:10000), dscAPoolOrder(1:10000), dscAPoolH(1:10000), dscAPoolHH(1:10000), nc, alpha);
 % toc
 % save pedestrianCenters_a0_20140926 centers centers_order centers_H centers_HH sD centerInd sLabel;
-% load ../expData/pedestrianCenters_a0_20140926
+% load ../expData/pedestrianCenters_20140919
 % nc = 300;
 % tic;
-% load ../expData/pedestrianCenters_seg_a0_20140926
-% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(segPool(1:10000), segPoolOrder(1:10000), segPoolH(1:10000), segPoolHH(1:10000), nc, alpha, sD);
+% % load ../expData/pedestrianCenters_seg_a0_20140926
+% [sLabel, centers, centers_order, centers_H, centers_HH, sD, centerInd] = nCutContourHH(segPool(1:10000), segPoolOrder(1:10000), segPoolH(1:10000), segPoolHH(1:10000), nc, alpha);
 % toc
-% save centers_seg_w300_a0_20140926 centers centers_order centers_H centers_HH sD centerInd sLabel;
-load ../expData/centers_seg_w300_a0_20140926;
+% save centers_seg_w300_a001_20140926 centers centers_order centers_H centers_HH sD centerInd sLabel;
+load ../expData/centers_seg_w300_a001_20140926;
 
 %% bow representation
 % feat = bowFeatHHAll(dscA_all_HH, centers_HH, dscA_all_order, centers_order, alpha);
@@ -112,9 +113,9 @@ load ../expData/centers_seg_w300_a0_20140926;
 % save feat_mytest_hOrder_a0_20140925 feat labels;
 % load ../expData/feat_mytest_hOrder_a0_20140925
 
-% feat = bowFeatHHAll(seg_all_HH, centers_HH, seg_all_order, centers_order, alpha);
+feat = bowFeatHHAll(seg_all_HH, centers_HH, seg_all_order, centers_order, alpha);
 % save feat_seg_mytrain_hOrder_a0_20140926 feat labels;
-load ../expData/feat_seg_mytrain_hOrder_a0_20140926;
+% load ../expData/feat_seg_mytrain_hOrder_a0_20140926;
 
 
 %% display

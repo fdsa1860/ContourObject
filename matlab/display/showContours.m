@@ -19,18 +19,19 @@ c(13, :) = [0 1 1];
 
 hFig = figure;
 set(hFig, 'Position', [200 100 1250 650]);
+set(gca,'YDir','reverse');
 hold on;
 
 for i = 1:k
     id = find(label == i);
     for j = 1:nEach(i)
-        plot(data{id(j)}(:, 1), data{id(j)}(:, 2), 'color', c(i, :),  'LineWidth', 1.5);
+        plot(data{id(j)}(:, 2), data{id(j)}(:, 1), 'color', c(i, :),  'LineWidth', 1.5);
     end
 end
 
 hold off;
 axis equal;
-axis([0 140 0 70]);
+axis([0 90 0 160]);
 xlabel('x', 'FontSize', 14);
 ylabel('y', 'FontSize', 14);
 title(['Number of class: ' num2str(k)], 'FontSize', 12);
