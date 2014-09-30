@@ -10,7 +10,7 @@ addpath(genpath('../matlab'));
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
 % img = im2double(imread('../inputData/image/241004.jpg'));
 % img = im2double(imread('../inputData/image/kids.png'));
-img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000011a.png'));
+img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
 
 imgSize = size(img);
 
@@ -21,7 +21,7 @@ minLen = 2*hankel_size+2;
 %% contour detection
 % 1 is Canny for synthetic image
 % 2 is Structured edge for natural image (P. Dollar's Method)
-contour = extractContours(img, 2);
+contour = extractContours(img, 2, 1);
 
 %%
 % rankminimization to reduce the effect of discretization
