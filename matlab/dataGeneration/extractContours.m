@@ -9,6 +9,10 @@
 
 function contour = extractContours(img, method, draw)
 
+if nargin < 3
+    draw = false;
+end
+
 % choose the method of edge detection
 if method == 1         % Canny
     img_bw = im2bw(img, 0.8);

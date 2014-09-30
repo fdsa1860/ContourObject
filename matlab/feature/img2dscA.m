@@ -55,7 +55,6 @@ for i = 1:numSeg
 end
 segment = seg2;
 
-% cluster the contour segments
 scA = cell(1, numSeg);  % cumulative angle for segments
 dscA = cell(1, numSeg); % the derivative of cumulative angle for segments
 for i = 1:numSeg

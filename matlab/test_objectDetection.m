@@ -63,31 +63,46 @@ load ../expData/dscASeg_mytrain_raw_20140926
 % save dscASeg_mytest_raw_20140926 dscA_all seg_all;
 % load ../expData/dscA_mytest_raw_20140926
 
+%% filter the short curves
+[dscA_all, seg_all, dscA_ind] = filterWithFixedLengthAll(dscA_all, seg_all, 2*hankel_size);
+
+%% line detection
+isLine_all = dscaLineDetectAll(dscA_all);
+% save isLine_mytrain_20140926 isLine_all;
+% load ../expData/isLine_mytrain_20140926;
 
 %% order estimation
-% [dscA_all_order, dscA_all_clean] = orderEstAll(dscA_all, true);
+% [dscA_all_order, dscA_all_clean] = orderEstAll(dscA_all, isLine_all, true);
 % save dscA_mytrain_clean_20140926 dscA_all_order dscA_all_clean 
-load ../expData/dscA_mytrain_clean_20140926
+% load ../expData/dscA_mytrain_clean_20140926
 % save dscA_mytest_clean_20140926 dscA_all_order dscA_all_clean;
 % load ../expData/dscA_mytest_clean_20140924
 
-% [seg_all_order, seg_all_clean] = orderEstAll(seg_all, true);
+% [seg_all_order, seg_all_clean] = orderEstAll(seg_all, isLine_all true);
 % save seg_mytrain_clean_20140926 seg_all_order seg_all_clean;
-load ../expData/seg_mytrain_clean_20140926;
+% load ../expData/seg_mytrain_clean_20140926;
 
 %% build hankel matrix
 % [dscA_all_H, dscA_all_HH] = buildHankelAll(dscA_all_clean, hankel_size, 1);
 % [seg_all_H, seg_all_HH] = buildHankelAll(seg_all_clean, hankel_size, 1);
 % save HH_mytrain_20140926 dscA_all_H dscA_all_HH seg_all_H seg_all_HH;
-load ../expData/HH_mytrain_20140926;
+% load ../expData/HH_mytrain_20140926;
+[dscA_all_H, dscA_all_HH] = buildHankelAll(dscA_all, hankel_size, 1);
+[seg_all_H, seg_all_HH] = buildHankelAll(seg_all, hankel_size, 1);
+
+%% normalized singular value estimation
+dscA_all_sigma = sigmaEstAll(dscA_all_H, isLine_all, true);
+% save sigma_mytrain_20140926 dscA_all_sigma
+% load ../expData/sigma_mytrain_20140926
 
 %% pooling
-% sampleNum = 10000;
-% poolMaxSize = 50000;
-% [dscAPool, dscAPoolOrder, dscAPoolH, dscAPoolHH] = pooling(dscA_all_clean, dscA_all_order, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
+sampleNum = 10000;
+poolMaxSize = 50000;
+% [dscAPool, dscAPoolOrder, dscAPoolH, dscAPoolHH] = pooling(dscA_all_clean, dscA_all_order, [], dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
+[dscAPool, dscAPoolOrder, dscAPoolH, dscAPoolHH] = pooling(dscA_all, [], dscA_all_sigma, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
 % save dscAPool_20140926 dscAPool dscAPoolOrder dscAPoolH dscAPoolHH;
 load ../expData/dscAPool_20140926;
-% [segPool, segPoolOrder, segPoolH, segPoolHH] = pooling(seg_all_clean, seg_all_order, seg_all_H, seg_all_HH, sampleNum, poolMaxSize);
+% [segPool, segPoolOrder, segPoolH, segPoolHH] = pooling(seg_all_clean, seg_all_order, [], seg_all_H, seg_all_HH, sampleNum, poolMaxSize);
 % save segPool_20140926 segPool segPoolOrder segPoolH segPoolHH;
 load ../expData/segPool_20140926;
 
