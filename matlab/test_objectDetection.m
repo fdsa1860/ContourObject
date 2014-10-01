@@ -68,6 +68,9 @@ load ../expData/dscASeg_mytrain_raw_20140926
 % save dscASeg_mytrain_raw_20140926 dscA_all seg_all;
 % load ../expData/dscASeg_mytrain_raw_20140926
 
+%% slide window crop contours
+[dscA_all] = slideWindowChopContourAll(dscA_all, 2*hankel_size);
+
 %% line detection
 isLine_all = dscaLineDetectAll(dscA_all);
 % save isLine_mytrain_20140926 isLine_all;
@@ -76,7 +79,7 @@ isLine_all = dscaLineDetectAll(dscA_all);
 %% order estimation
 % [dscA_all_order, dscA_all_clean] = orderEstAll(dscA_all, isLine_all, true);
 % save dscA_mytrain_clean_20140930 dscA_all_order dscA_all_clean 
-load ../expData/dscA_mytrain_clean_20140930
+% load ../expData/dscA_mytrain_clean_20140930
 % save dscA_mytest_clean_20140926 dscA_all_order dscA_all_clean;
 % load ../expData/dscA_mytest_clean_20140924
 
@@ -87,25 +90,26 @@ load ../expData/dscA_mytrain_clean_20140930
 %% build hankel matrix
 % [dscA_all_H, dscA_all_HH] = buildHankelAll(dscA_all_clean, hankel_size, 1);
 % save HH_dscA_mytrain_20140930 dscA_all_H dscA_all_HH;
-load ../expData/HH_dscA_mytrain_20140930;
+% load ../expData/HH_dscA_mytrain_20140930;
 % [seg_all_H, seg_all_HH] = buildHankelAll(seg_all_clean, hankel_size, 1);
 % save HH_mytrain_20140926 dscA_all_H dscA_all_HH seg_all_H seg_all_HH;
 % load ../expData/HH_mytrain_20140926;
-% [dscA_all_H, dscA_all_HH] = buildHankelAll(dscA_all, hankel_size, 1);
-% [seg_all_H, seg_all_HH] = buildHankelAll(seg_all, hankel_size, 1);
+[dscA_all_H, dscA_all_HH] = buildHankelAll(dscA_all, hankel_size, 1);
+[seg_all_H, seg_all_HH] = buildHankelAll(seg_all, hankel_size, 1);
 
 %% normalized singular value estimation
-% dscA_all_sigma = sigmaEstAll(dscA_all_H, isLine_all, true);
+dscA_all_sigma = sigmaEstAll(dscA_all_H, isLine_all, true);
 % save sigma_dscA_mytrain_20140930 dscA_all_sigma
-load ../expData/sigma_dscA_mytrain_20140930
+% load ../expData/sigma_dscA_mytrain_20140930
 
 %% pooling
 sampleNum = 10000;
 poolMaxSize = 50000;
 % [dscAPool, dscAPoolOrder, dscAPoolH, dscAPoolHH] = pooling(dscA_all_clean, dscA_all_order, [], dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
 % [dscAPool, dscAPoolOrder, dscAPoolSigma, dscAPoolH, dscAPoolHH] = pooling(dscA_all, dscA_all_order, dscA_all_sigma, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
+[dscAPool, dscAPoolOrder, dscAPoolSigma, dscAPoolH, dscAPoolHH] = pooling(dscA_all, [], dscA_all_sigma, dscA_all_H, dscA_all_HH, sampleNum, poolMaxSize);
 % save dscAPool_20140930 dscAPool dscAPoolOrder dscAPoolSigma dscAPoolH dscAPoolHH;
-load ../expData/dscAPool_20140930;
+% load ../expData/dscAPool_20140930;
 % [segPool, segPoolOrder, segPoolH, segPoolHH] = pooling(seg_all_clean, seg_all_order, [], seg_all_H, seg_all_HH, sampleNum, poolMaxSize);
 % save segPool_20140926 segPool segPoolOrder segPoolH segPoolHH;
 % load ../expData/segPool_20140926;
@@ -121,7 +125,7 @@ nc = 10;
 % [sLabel, centers, centers_sigma, centers_H, centers_HH, sD, centerInd] = nCutContourHHSigma(dscAPool(1:10000), dscAPoolSigma(:, 1:10000), dscAPoolH(1:10000), dscAPoolHH(1:10000), nc, alpha);
 % toc
 % save ped_dscA_centers_a001_20140930 centers centers_sigma centers_H centers_HH sD centerInd sLabel;
-load ../expData/ped_dscA_centers_a001_20140930
+load ../expData/ped_dscACropped_centers_a001_20141001
 % nc = 300;
 % tic;
 % % load ../expData/pedestrianCenters_seg_a0_20140926
