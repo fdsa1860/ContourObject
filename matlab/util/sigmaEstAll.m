@@ -9,12 +9,17 @@ if nargin < 3
     verbose = false;
 end
 
+if nargin < 2 || isempty(isLine_all)
+    isLine_all = cell(1, length(H_all));
+end
+
+if verbose
+    fprintf('computing sigma ...');
+end
+
 numImg = length(H_all);
 sigma_all = cell(1, numImg);
 for i = 1:numImg
-    if verbose
-        fprintf('Processing image %d ... \n', i);
-    end
     if isempty(H_all{i})
         continue;
     end
@@ -22,7 +27,7 @@ for i = 1:numImg
 end
 
 if verbose
-    fprintf('Process finished!\n');
+    fprintf('finished!\n');
 end
 
 end

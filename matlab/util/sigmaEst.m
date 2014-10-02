@@ -5,6 +5,10 @@ function sigma = sigmaEst(H, isLine)
 % sigma: D by N matrix, each column contains normalize singular value
 % vector
 
+if nargin < 2 || isempty(isLine)
+    isLine = false(1, length(H));
+end
+
 numSeg = length(H);
 ind = ~cellfun(@isempty, H);
 hankelSize = size(H{ind(1)}, 1);

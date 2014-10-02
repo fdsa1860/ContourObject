@@ -1,4 +1,4 @@
-function [H_all, HH_all] = buildHankelAll(X_all, hankel_size, mode)
+function [H_all, HH_all] = buildHankelAll(X_all, hankel_size, mode, verbose)
 % Input:
 % X_all: data to build hankel matrix
 % hankel_size: when mode 1, number of rows of hankel matrix, when mode 2,
@@ -8,6 +8,14 @@ function [H_all, HH_all] = buildHankelAll(X_all, hankel_size, mode)
 % Output:
 % H_all: the hankel matrix H
 % HH_all: it is H*H' if mode is 1; it is H'*H if mode is 2
+
+if nargin < 4
+    verbose = false;
+end
+
+if verbose
+    fprintf('building hankel matrices ...');
+end
 
 numImg = length(X_all);
 H_all = cell(1, numImg);
@@ -27,6 +35,10 @@ for i = 1:numImg
     end
     H_all{i} = H;
     HH_all{i} = HH;
+end
+
+if verbose
+    fprintf('finish!\n');
 end
 
 end

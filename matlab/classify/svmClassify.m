@@ -1,6 +1,7 @@
 function svmClassify(feat, labels)
 
 addpath(genpath('../3rdParty/liblinear-1.94/matlab'));
+rng(0);
 
 % ind = randperm(200);
 % feat_perm = feat(:,ind);
