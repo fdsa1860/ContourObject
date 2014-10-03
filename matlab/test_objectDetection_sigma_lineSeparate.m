@@ -79,11 +79,24 @@ featLine = lineFeatAll(slope_all, nBins);
 % normalize
 featLine = l2Normalization(featLine);
 
+%% structured line feature
+wid = 96; hgt = 160;
+block_all = cell(1, length(slope_all));
+for i = 1:length(slope_all)
+    block_all{i} = genBlock(wid, hgt, 1, 4);
+end
+featLine = structureLineFeatAll(slope_all, nBins, points_line_all, block_all);
+featLine = l2Normalization(featLine);
+
+%% structured non-line feature
+featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha, points_notLine_all, block_all);
+featNotLine = l2Normalization(featNotLine);
+
 %% concatenate line feature and not-line feature
-% feat = [featNotLine; featLine];
+feat = [featNotLine; featLine];
 % feat = l2Normalization(feat);
 % feat = featNotLine;
-feat = featLine;
+% feat = featLine;
 
 %% display
 

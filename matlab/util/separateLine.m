@@ -20,8 +20,8 @@ for i = 1:numImg
     dscA_notLine_all{i} = dscA_all{i}(~isLine_all{i});
     seg_line_all{i} = seg_all{i}(isLine_all{i});
     seg_notLine_all{i} = seg_all{i}(~isLine_all{i});
-    points_line_all = points_all{i}(isLine_all{i});
-    points_notLine_all = points_all{i}(~isLine_all{i});
+    points_line_all{i} = points_all{i}(isLine_all{i}, :);
+    points_notLine_all{i} = points_all{i}(~isLine_all{i}, :);
 end
 
 if verbose
