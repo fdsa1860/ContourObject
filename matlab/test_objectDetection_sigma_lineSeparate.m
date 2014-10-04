@@ -8,8 +8,8 @@ addpath(genpath('../matlab'));
 hankel_size = 4;
 alpha = 0.01;
 
-opt = 'mytrain';
-% opt = 'mytest';
+% opt = 'mytrain';
+opt = 'mytest';
 
 %% load data
 posDir = sprintf('../../../data/INRIAPerson/%s/pos/', opt);
@@ -18,20 +18,18 @@ negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 
 %% compute contours, then features
 % tic
-% [dscA_all, seg_all] = img2dscaAll(imgList, true);
+% [dscA_all, seg_all] = img2dscaAll(imgList, false, true);
 % toc
-% save dscASeg_mytrain_raw_20140926 dscA_all seg_all;
-load ../expData/dscASeg_mytrain_raw_20140926
-% save dscASeg_mytest_raw_20140926 dscA_all seg_all;
-% load ../expData/dscA_mytest_raw_20140926
+% save(sprintf('dscASeg_%s_raw_20140926', opt), 'dscA_all', 'seg_all');
+load(sprintf('../expData/dscASeg_%s_raw_20140926', opt));
 
 %% filter the short curves
 [dscA_all, seg_all, dscA_ind] = filterWithFixedLengthAll(dscA_all, seg_all, 2*hankel_size);
 
 %% slide window crop contours
 % [dscA_all, seg_all, points_all] = slideWindowChopContourAll(dscA_all, seg_all, 2*hankel_size, true);
-% save dscASeg_mytrain_sw_20141002 dscA_all seg_all points_all
-load ../expData/dscASeg_mytrain_sw_20141002;
+% save(sprintf('dscASeg_%s_sw_20141002', opt), 'dscA_all', 'seg_all', 'points_all');
+load(sprintf('../expData/dscASeg_%s_sw_20141002', opt));
 
 %% line detection
 isLine_all = dscaLineDetectAll(dscA_all);
@@ -86,10 +84,14 @@ for i = 1:length(slope_all)
     block_all{i} = genBlock(wid, hgt, 1, 4);
 end
 featLine = structureLineFeatAll(slope_all, nBins, points_line_all, block_all);
+% save(sprintf('featLine_%s_20141002', opt), 'featLine');
+% load(sprintf('../expData/featLine_%s_20141002', opt));
 featLine = l2Normalization(featLine);
 
 %% structured non-line feature
 featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha, points_notLine_all, block_all);
+% save(sprintf('featNotLine_%s_a001_20141002', opt), 'featNotLine');
+% load(sprintf('../expData/featNotLine_%s_a001_20141002', opt));
 featNotLine = l2Normalization(featNotLine);
 
 %% concatenate line feature and not-line feature
@@ -98,8 +100,28 @@ feat = [featNotLine; featLine];
 % feat = featNotLine;
 % feat = featLine;
 
+
 %% display
 
 %% svm classification to test how hard the data is to classify
-fprintf('classifying ...\n');
-svmClassify(feat, labels);
+% load feature data
+% load ../expData/featLine_mytrain_20141002;
+% featLine = l2Normalization(featLine);
+% load ../expData/featNotLine_mytrain_a001_20141002;
+% featNotLine = l2Normalization(featNotLine);
+% feat = [featNotLine; featLine];
+% save feat_mytrain_l2Norm_a001_20141002 feat labels;
+load ../expData/feat_mytrain_l2Norm_a001_20141002
+X_train = feat;
+y_train = labels;
+% load ../expData/featLine_mytest_20141002;
+% featLine = l2Normalization(featLine);
+% load ../expData/featNotLine_mytest_a001_20141002;
+% featNotLine = l2Normalization(featNotLine);
+% feat = [featNotLine; featLine];
+% save feat_mytest_l2Norm_a001_20141002 feat labels;
+load ../expData/feat_mytest_l2Norm_a001_20141002
+X_test = feat;
+y_test = labels;
+
+svmClassify(X_train, y_train, X_test, y_test);
