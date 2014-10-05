@@ -8,8 +8,8 @@ addpath(genpath('../matlab'));
 hankel_size = 4;
 alpha = 0.01;
 
-% opt = 'mytrain';
-opt = 'mytest';
+opt = 'mytrain';
+% opt = 'mytest';
 
 %% load data
 posDir = sprintf('../../../data/INRIAPerson/%s/pos/', opt);
@@ -17,11 +17,21 @@ negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 [imgList, labels] = loadImgList(posDir, negDir);
 
 %% compute contours, then features
-% tic
-% [dscA_all, seg_all] = img2dscaAll(imgList, false, true);
-% toc
-% save(sprintf('dscASeg_%s_raw_20140926', opt), 'dscA_all', 'seg_all');
-load(sprintf('../expData/dscASeg_%s_raw_20140926', opt));
+tic
+[dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, false, true);
+toc
+save(sprintf('dscASeg_%s_raw_20141005', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
+opt = 'mytest';
+%% load data
+posDir = sprintf('../../../data/INRIAPerson/%s/pos/', opt);
+negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
+[imgList, labels] = loadImgList(posDir, negDir);
+%% compute contours, then features
+tic
+[dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, false, true);
+toc
+save(sprintf('dscASeg_%s_raw_20141005', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
+load(sprintf('../expData/dscASeg_%s_raw_20141005', opt));
 
 %% filter the short curves
 [dscA_all, seg_all, dscA_ind] = filterWithFixedLengthAll(dscA_all, seg_all, 2*hankel_size);
@@ -78,10 +88,9 @@ featLine = lineFeatAll(slope_all, nBins);
 featLine = l2Normalization(featLine);
 
 %% structured line feature
-wid = 96; hgt = 160;
 block_all = cell(1, length(slope_all));
 for i = 1:length(slope_all)
-    block_all{i} = genBlock(wid, hgt, 1, 4);
+    block_all{i} = genBlock(imgSize_all(i,2), imgSize_all(i,1), 1, 4);
 end
 featLine = structureLineFeatAll(slope_all, nBins, points_line_all, block_all);
 % save(sprintf('featLine_%s_20141002', opt), 'featLine');
