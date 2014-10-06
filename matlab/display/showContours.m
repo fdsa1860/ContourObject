@@ -31,7 +31,7 @@ end
 
 hold off;
 axis equal;
-axis([0 90 0 160]);
+axis([0 64 0 128]);
 xlabel('x', 'FontSize', 14);
 ylabel('y', 'FontSize', 14);
 title(['Number of class: ' num2str(k)], 'FontSize', 12);
