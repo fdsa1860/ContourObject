@@ -1,4 +1,4 @@
-function [dscA, segment] = img2dscA(img, draw)
+function [dscA, segment, Size] = img2dscA(img, draw)
 
 if nargin < 2
     draw = false;
