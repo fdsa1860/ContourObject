@@ -1,10 +1,10 @@
-function [dscA, segment, Size] = img2dscA(img, draw)
+function [dscA, segment, imgSize] = img2dscA(img, draw)
 
 if nargin < 2
     draw = false;
 end
 
-imgSize = size(img);
+imgSize = [size(img,1) size(img,2)];
 
 % contour detection
 % 1 is Canny for synthetic image
@@ -17,10 +17,9 @@ if isempty(contour)
 end
 
 % rankminimization to reduce the effect of discretization
-Size = imgSize(1:2);
 hankel_size = 4;
 lambda = 5;
-contour_clean = rankminimize(contour, hankel_size, Size, lambda);
+contour_clean = rankminimize(contour, hankel_size, imgSize, lambda);
 
 % resample
 mode = 1; % fixed length

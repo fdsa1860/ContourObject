@@ -1,18 +1,26 @@
 function generateImagePatch
 
-% negDir = '../../../../data/INRIAPerson/train_64x128_H96/neg/';
-% fileList = dir(fullfile(negDir,'*.png'));
-% outputDir = '../../../../data/INRIAPerson/mytrain/neg/';
+% opt = 'mytrain';
+opt = 'mytest';
 
+if strcmp(opt, 'mytrain')
+negDir = '../../../../data/INRIAPerson/train_64x128_H96/neg/';
+fileList = dir(fullfile(negDir,'*.png'));
+outputDir = '../../../../data/INRIAPerson/mytrain/neg/';
+% set width and height of bounding boxes
+width = 96;
+height = 160;
+elseif strcmp(opt, 'mytest')
 negDir = '../../../../data/INRIAPerson/test_64x128_H96/neg/';
 fileList = dir(fullfile(negDir,'*.png'));
 outputDir = '../../../../data/INRIAPerson/mytest/neg/';
-
+width = 70;
+height = 134;
+end
 % set random seed
-rng(0);
-% set width and height of bounding boxes
-width = 64;
-height = 128;
+rng('default');
+
+
 numBox = 10;
 n = length(fileList);
 %% loop
