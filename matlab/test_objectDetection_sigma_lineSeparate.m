@@ -17,11 +17,11 @@ negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 [imgList, labels] = loadImgList(posDir, negDir);
 
 %% compute contours, then features
-% tic
-% [dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, true, true);
-% toc
+tic
+[dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, false, true);
+toc
 % save(sprintf('dscASeg_%s_raw_20141005', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
-load(sprintf('../expData/dscASeg_%s_raw_20141005', opt));
+% load(sprintf('../expData/dscASeg_%s_raw_20141005', opt));
 
 %% filter the short curves
 [dscA_all, seg_all, dscA_ind] = filterWithFixedLengthAll(dscA_all, seg_all, 2*hankel_size);
@@ -120,8 +120,10 @@ y_train = labels;
 % featNotLine = l2Normalization(featNotLine);
 % feat = [featNotLine; featLine];
 % save feat_mytest_l2Norm_a001_20141005 feat labels;
-load ../expData/feat_mytest_l2Norm_a001_20141005
+load ../expData/feat_mytest_l2Norm_a001_20141002
 X_test = feat;
 y_test = labels;
 
-svmClassify(X_train, y_train, X_test, y_test);
+% svmClassify(X_train, y_train, X_test, y_test);
+% svmClassify(X_train, y_train);
+svmClassify(X_test, y_test);
