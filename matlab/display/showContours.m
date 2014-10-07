@@ -31,7 +31,7 @@ end
 
 hold off;
 axis equal;
-axis([0 64 0 128]);
+axis([min(data(:,2)) max(data(:,2)) min(data(:,1)) max(data(:,1))]);
 xlabel('x', 'FontSize', 14);
 ylabel('y', 'FontSize', 14);
 title(['Number of class: ' num2str(k)], 'FontSize', 12);
