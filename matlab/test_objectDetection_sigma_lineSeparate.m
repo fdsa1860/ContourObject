@@ -116,8 +116,8 @@ feat = [featNotLine; featLine];
 % feat = featLine;
 % save feat_mytrain_l2Norm_a001_20141005 feat labels;
 % load ../expData/feat_mytrain_l2Norm_a001_20141005
-X_train1 = feat;
-% y_train1 = labels;
+X_train = feat;
+y_train = labels;
 
 load ../expData/featLine_mytest_20141005;
 % featLine = powerNormalization(featLine);
@@ -130,21 +130,18 @@ feat = [featNotLine; featLine];
 % feat = featLine;
 % save feat_mytest_l2Norm_a001_20141005 feat labels;
 % load ../expData/feat_mytest_l2Norm_a001_20141002
-X_test1 = feat;
-% y_test1 = labels;
+X_test = feat;
+y_test = labels;
 
-load ../expData/hog_train_20141006;
+% load ../expData/hog_train_20141006;
 % X_train = powerNormalization(X_train);
 % X_train = l2Normalization(X_train);
-load ../expData/hog_test_20141006;
+% load ../expData/hog_test_20141006;
 % X_test = powerNormalization(X_test);
 % X_test = l2Normalization(X_test);
 % X_train = [X_train;X_train1];
 % X_test = [X_test;X_test1];
 
-model = svmtrain(X_train, y_train, 'kernel_function', 'rbf');
-pred = svmclassify(model, X_test');
-accuracy = nnz(pred == y_test') / length(y_test);
-fprintf('\naccuracy is %f\n',mean(accuracy));
-% svmClassify(X_train, y_train);
-% svmClassify(X_test, y_test);
+tic;[accMat, libsvmModel] = libsvmClassify(X_train, y_train, X_test, y_test);toc
+% tic;liblinearClassify(X_train, y_train, X_test, y_test);toc
+
