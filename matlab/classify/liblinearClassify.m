@@ -1,4 +1,4 @@
-function svmClassify(feat1, labels1, feat2, labels2)
+function [accuracyMat, liblinearModel] = liblinearClassify(feat1, labels1, feat2, labels2)
 
 fprintf('classifying ...\n');
 
@@ -25,7 +25,7 @@ if nargin == 2
 %             accuracy(i) = nnz(predict_label==y_validate2')/length(y_validate2);
             [predict_label, ~, prob_estimates] = predict(y_test', sparse(X_test'), model);
             accuracy = nnz(predict_label==y_test')/length(y_test);
-            svmModel = model;
+            liblinearModel = model;
             fprintf('\naccuracy is %f\n',mean(accuracy));
             accuracyMat(ci) = mean(accuracy);
         end
@@ -47,7 +47,7 @@ elseif nargin == 4
 %         accuracy(i) = nnz(predict_label==y_validate2')/length(y_validate2);
         [predict_label, ~, prob_estimates] = predict(y_test', sparse(X_test'), model);
         accuracy = nnz(predict_label==y_test')/length(y_test);
-        svmModel = model;
+        liblinearModel = model;
         fprintf('\naccuracy is %f\n',mean(accuracy));
         accuracyMat(ci) = mean(accuracy);
     end
