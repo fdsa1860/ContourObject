@@ -20,7 +20,7 @@ if nargin == 2
         C = 0.1;
         accuracyMat = zeros(1,length(C));
         for ci = 1:length(C)
-            model = svmtrain(y_train',sparse(X_train'),sprintf('-s 2 -c %d',C(ci)));
+            model = svmtrain(y_train',sparse(X_train'),sprintf('-t 0 -c %d',C(ci)));
             %             [predict_label, ~, prob_estimates] = predict(y_validate2', sparse(X2_validate'), model);
             %             accuracy(i) = nnz(predict_label==y_validate2')/length(y_validate2);
             [predict_label, ~, prob_estimates] = svmpredict(y_test', sparse(X_test'), model);
@@ -40,8 +40,8 @@ elseif nargin == 4
     numTrain = length(y_train);
     numTest = length(y_test);
     
-    Cind = -1:10;
-    Gind = -7:7;
+    Cind = 1;
+    Gind = 1;
     C = 2.^Cind;
     G = 10.^Gind;
     %     C = 0.1;
@@ -49,14 +49,14 @@ elseif nargin == 4
     libsvmModel = cell(length(G),length(C));
     for gi = 1:length(G)
         for ci = 1:length(C)
-            K_train = [ (1:numTrain)' , chi2Kernel(X_train', X_train', G(gi)) ];
-            K_test = [ (1:numTest)'  , chi2Kernel(X_test', X_test', G(gi)) ];
-            model = svmtrain(y_train',K_train,sprintf('-t 4 -c %d', C(ci)));
-            [predict_label, ~, prob_estimates] = svmpredict(y_test', K_test, model);
-            %         model = svmtrain(y_train',sparse(X_train'),sprintf('-h 0 -s 0 -t 0 -c %d',C(ci)));
-            %         [predict_label, ~, prob_estimates] = svmpredict(y_test', sparse(X_test'), model);
-            %         [predict_label, ~, prob_estimates] = predict(y_validate2', sparse(X2_validate'), model);
-            %         accuracy(i) = nnz(predict_label==y_validate2')/length(y_validate2);
+%             K_train = [ (1:numTrain)' , chi2Kernel(X_train', X_train', G(gi)) ];
+%             K_test = [ (1:numTest)'  , chi2Kernel(X_test', X_test', G(gi)) ];
+%             model = svmtrain(y_train',K_train,sprintf('-t 4 -c %d', C(ci)));
+%             [predict_label, ~, prob_estimates] = svmpredict(y_test', K_test, model);
+            model = svmtrain(y_train',sparse(X_train'),sprintf('-h 0 -s 0 -t 0 -c %d',C(ci)));
+            [predict_label, ~, prob_estimates] = svmpredict(y_test', sparse(X_test'), model);
+%             [predict_label, ~, prob_estimates] = predict(y_validate2', sparse(X2_validate'), model);
+%             accuracy(i) = nnz(predict_label==y_validate2')/length(y_validate2);
             
             accuracy = nnz(predict_label==y_test')/length(y_test);
             libsvmModel{gi, ci} = model;

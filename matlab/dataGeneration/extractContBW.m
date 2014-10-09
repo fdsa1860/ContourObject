@@ -4,52 +4,96 @@ function contour = extractContBW(BW)
 
 contour = {};
 k = 1;
+min_len = 10;
 
-% Break the contours at crossing
+% delete trivial endpoint
+contourz_all = bwboundaries(BW, 4);
+len = cellfun(@length, contourz_all);
+contourz_all(len < 5) = [];
+for i = 1:length(contourz_all)
+    contourz = contourz_all{i};
+    hit = false(size(contourz, 1), 1);
+    d1 = sum(abs(contourz(1:end-2,:) - contourz(3:end,:)), 2);
+    d2 = sum(abs(contourz(1:end-4,:) - contourz(5:end,:)), 2);
+    d3 = sum(abs(contourz(2,:) - contourz(end-1,:)));
+    d4 = sum(abs(contourz(3,:) - contourz(end-2,:)));
+    hit(3:end-2) = (d1(2:end-1)==0 & d2~=0);
+    hit(2) = (d1(1)==0);
+    hit(end-1) = (d1(end)==0);
+    hit(1) = (d3==0 && d4~=0);
+    hit(end) = hit(1);
+    ind = find(hit);
+    indToErase = sub2ind(size(BW), contourz(ind,1), contourz(ind,2));
+    BW(indToErase) = 0;
+end
+
+contourz_all = bwboundaries(BW, 8);
+len = cellfun(@length, contourz_all);
+contourz_all(len < 5) = [];
+for i = 1:length(contourz_all)
+    contourz = contourz_all{i};
+    hit = false(size(contourz, 1), 1);
+    d1 = sum(abs(contourz(1:end-2,:) - contourz(3:end,:)), 2);
+    d2 = sum(abs(contourz(1:end-4,:) - contourz(5:end,:)), 2);
+    d3 = sum(abs(contourz(2,:) - contourz(end-1,:)));
+    d4 = sum(abs(contourz(3,:) - contourz(end-2,:)));
+    hit(3:end-2) = (d1(2:end-1)==0 & d2~=0);
+    hit(2) = (d1(1)==0);
+    hit(end-1) = (d1(end)==0);
+    hit(1) = (d3==0 && d4~=0);
+    hit(end) = hit(1);
+    ind = find(hit);
+    indToErase = sub2ind(size(BW), contourz(ind,1), contourz(ind,2));
+    BW(indToErase) = 0;
+end
+
+cont_filter = [
+    0 1 0;
+    1 1 0;
+    0 0 -1];
+tmp_bw = conv2(BW, cont_filter, 'same');
+BW(tmp_bw == 3) = 0;
+
+cont_filter = [
+    0 1 0;
+    0 1 1;
+    -1 0 0];
+tmp_bw = conv2(BW, cont_filter, 'same');
+BW(tmp_bw == 3) = 0;
+
+cont_filter = [
+    0 0 -1;
+    1 1 0;
+    0 1 0];
+tmp_bw = conv2(BW, cont_filter, 'same');
+BW(tmp_bw == 3) = 0;
+
+cont_filter = [
+    -1 0 0;
+    0 1 1;
+    0 1 0];
+tmp_bw = conv2(BW, cont_filter, 'same');
+BW(tmp_bw == 3) = 0;
+
+% acquire the contours
 cont_filter = [1 1 1;
-               1 0 1;
-               1 1 1];
+    1 0 1;
+    1 1 1];
 tmp_bw = conv2(BW, cont_filter, 'same');
 tmp_bw = tmp_bw.*BW;
-[row, col] = find(tmp_bw >= 3);
-crosspoint = [row col];
 [row, col] = find(tmp_bw == 1);
 endpoint = [row col];
-
-% delete trivial endpoint, if there is a endpoint beside a crosspoint,
-% delete this endpoint
-D = pdist2(crosspoint, endpoint, 'L1');
-D==1
-
 [row, col]=find(tmp_bw > 0);
 all_p=[row col];
 
-min_len = 20;
-
-while (~isempty(all_p))
-    if isempty(endpoint)
-        % all_p store all the begining point
-        pt = all_p(1,:);
-        contourz = bwtraceboundary(BW, pt, 'W', 8, 2000,'clockwise');
-        % sepatate the contourz for two parts, and use both of them as the same
-        % trajectory from different direction
-        % contourz_half is the first half and contourz_half1 is the seconde half
-        % if there is an wheel in the image there is no beginning point we directly
-        % set contourz_half information to contourz
-%         contourz_half=contourz;
-%         contourz_half1=[];
-    else
-        pt = endpoint(1,:);
-        contourz = bwtraceboundary(BW, pt, 'W', 8, 2000,'clockwise');
-%         contourz_half=contourz(1:floor(length(contourz)/2),:);
-        %           contourz_half1=contourz(floor(length(contourz)/2)+1:length(contourz),:);
-%         contourz = [contourz_half;
-            %                      contourz_half1;
-%                     endpoint(1,:)];
-        
-    end
-    
+contourz_all = bwboundaries(BW, 8);
+len = cellfun(@length, contourz_all);
+contourz_all(len < 5) = [];
+for i = 1:length(contourz_all)
+    contourz = contourz_all{i};
     while ~isempty(contourz)
+        indToErase = sub2ind(size(BW), contourz(:,1), contourz(:,2));
+        BW(indToErase) = 0;
         isValid = ismember(contourz, endpoint, 'rows') & ~ismember(contourz, contourz(1,:), 'rows');
         ind = find(isValid, 1);
         if ~isempty(ind)
@@ -70,34 +114,20 @@ while (~isempty(all_p))
                 k = k + 1;
             end
             % remove the segment while keep the connection
-            contourz(ind_pre+2:ind_nxt-1, :) = []; 
+            contourz(ind_pre+2:ind_nxt-1, :) = [];
+            if size(contourz, 1) == 1
+                contourz = [];
+            end
+        else
+            if size(contourz, 1) >= min_len
+                contour{k} = contourz;
+                k = k + 1;
+            end
+            contourz = [];
         end
     end
-    
-    %     estimate the contour is empty or not, if not the point in each
-    %     trajectory should longer than 15
-    if(~isempty(contourz))
-        if(size(contourz_half,1)>=min_len)
-            contour{k}=contourz_half;
-            k=k+1;
-        end
-%         if(size(contourz_half1,1)>=min_len)
-%             contour{k}=contourz_half1;
-%             k=k+1;
-%         end
-        
-        for n = 1:length(contourz)
-            BW(contourz(n,1),contourz(n,2)) = 0;
-        end
-        [row1,col1]=find(BW==1);
-        endpoint=[row1,col1];
-        [row,column]=find(BW > 1);
-        all_p=[row';column']';
-    else
-        all_p(1,:)=[];
-    end
-    
 end
+
 contour = contour';
 
 end

@@ -22,16 +22,24 @@ set(hFig, 'Position', [200 100 1250 650]);
 set(gca,'YDir','reverse');
 hold on;
 
+xmin = inf;
+xmax = 0;
+ymin = inf;
+ymax = 0;
 for i = 1:k
     id = find(label == i);
     for j = 1:nEach(i)
         plot(data{id(j)}(:, 2), data{id(j)}(:, 1), 'color', c(i, :),  'LineWidth', 1.5);
+        xmin = min(xmin, min(data{id(j)}(:, 2)));
+        xmax = max(xmax, max(data{id(j)}(:, 2)));
+        ymin = min(ymin, min(data{id(j)}(:, 1)));
+        ymax = max(ymax, max(data{id(j)}(:, 1)));
     end
 end
 
 hold off;
 axis equal;
-axis([min(data(:,2)) max(data(:,2)) min(data(:,1)) max(data(:,1))]);
+axis([xmin-5 xmax+5 ymin-5 ymax+5]);
 xlabel('x', 'FontSize', 14);
 ylabel('y', 'FontSize', 14);
 title(['Number of class: ' num2str(k)], 'FontSize', 12);

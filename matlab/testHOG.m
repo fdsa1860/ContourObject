@@ -38,14 +38,14 @@ end
 % X_train = feat;
 % y_train = labels;
 % save hog_train_20141006 X_train y_train
-X_test = feat;
-y_test = labels;
-save hog_test_20141006 X_test y_test
+% X_test = feat;
+% y_test = labels;
+% save hog_test_20141006 X_test y_test
 %%
 load ../expData/hog_train_20141006;
 load ../expData/hog_test_20141006;
 
-svmClassify(X_train, y_train, X_test, y_test);
+libsvmClassify(X_train, y_train, X_test, y_test);
 
 
 
