@@ -5,6 +5,8 @@ function testVOC
 clc;close all;clear;
 % change this path if you install the VOC code elsewhere
 addpath(genpath('../3rdParty/VOCdevkit/VOCcode/'));
+addpath(genpath('../3rdParty/'));
+addpath(genpath('../matlab'));
 
 % initialize VOC options
 VOCinit;
@@ -47,12 +49,15 @@ for i=1:length(ids)
         % compute and save features
         I=imread(sprintf(VOCopts.imgpath,ids{i}));
 %         fd=extractfd(VOCopts,I);
-        fd = img2feat(I,1);
+        fd = img2feat(I,0);
         save(sprintf(VOCopts.exfdpath,ids{i}),'fd');
     end
     
     classifier.FD(1:length(fd),i)=fd;
+    
 end
+
+classifier.model = svmtrain(classifier.gt,sparse(classifier.FD'),'-t 0');
 
 % run classifier on test images
 function test(VOCopts,cls,classifier)
@@ -79,17 +84,19 @@ for i=1:length(ids)
     catch
         % compute and save features
         I=imread(sprintf(VOCopts.imgpath,ids{i}));
-        fd=extractfd(VOCopts,I);
+%         fd=extractfd(VOCopts,I);
+        fd = img2feat(I,0);
         save(sprintf(VOCopts.exfdpath,ids{i}),'fd');
     end
 
     % compute confidence of positive classification
-    c=classify(VOCopts,classifier,fd);
-    
+%     c=classify(VOCopts,classifier,fd);
     % write to results file
-    fprintf(fid,'%s %f\n',ids{i},c);
+%     fprintf(fid,'%s %f\n',ids{i},accuracy);
 end
-
+[predict_label, ~, prob] = svmpredict(classifier.gt, sparse(fd'), classifier.model);
+accuracy = nnz(predict_label==classifier.gt)/length(classifier.gt);
+accuracy
 % close results file
 fclose(fid);
 
