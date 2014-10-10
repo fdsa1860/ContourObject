@@ -31,6 +31,11 @@ function classifier = train(VOCopts,cls)
 % load 'train' image set for class
 [ids,classifier.gt]=textread(sprintf(VOCopts.clsimgsetpath,cls,'train'),'%s %d');
 
+% ignore the difficult samples
+id_difficult = find(classifier.gt==0);
+ids(id_difficult) = [];
+classifier.gt(id_difficult) = [];
+
 % extract features for each image
 classifier.FD=zeros(0,length(ids));
 tic;
@@ -63,13 +68,20 @@ classifier.model = svmtrain(classifier.gt,sparse(classifier.FD'),'-t 0');
 function test(VOCopts,cls,classifier)
 
 % load test set ('val' for development kit)
-[ids,gt]=textread(sprintf(VOCopts.imgsetpath,VOCopts.testset),'%s %d');
+% [ids,gt]=textread(sprintf(VOCopts.imgsetpath,VOCopts.testset),'%s %d');
+[ids, gt]=textread(sprintf(VOCopts.clsimgsetpath,cls,'val'),'%s %d');
+
+% ignore the difficult samples
+id_difficult = find(gt==0);
+ids(id_difficult) = [];
+gt(id_difficult) = [];
 
 % create results file
 fid=fopen(sprintf(VOCopts.clsrespath,'comp1',cls),'w');
 
 % classify each image
 tic;
+fd_all = zeros(36, length(ids));
 for i=1:length(ids)
     % display progress
     if toc>1
@@ -88,15 +100,17 @@ for i=1:length(ids)
         fd = img2feat(I,0);
         save(sprintf(VOCopts.exfdpath,ids{i}),'fd');
     end
-
+    
+    fd_all(:, i) = fd;
     % compute confidence of positive classification
 %     c=classify(VOCopts,classifier,fd);
+    [lb, acc, conf] = svmpredict(1, sparse(fd'), classifier.model);
     % write to results file
-%     fprintf(fid,'%s %f\n',ids{i},accuracy);
+    fprintf(fid,'%s %f\n',ids{i},conf);
 end
-[predict_label, ~, prob] = svmpredict(classifier.gt, sparse(fd'), classifier.model);
-accuracy = nnz(predict_label==classifier.gt)/length(classifier.gt);
-accuracy
+% [predict_label, acc, dec] = svmpredict(gt, sparse(fd_all'), classifier.model);
+% accuracy = nnz(predict_label==gt)/length(gt);
+% accuracy
 % close results file
 fclose(fid);
 

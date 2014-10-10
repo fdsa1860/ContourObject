@@ -6,7 +6,7 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
 hankel_size = 4;
-alpha = 0.01;
+alpha = 0;
 
 opt = 'mytrain';
 % opt = 'mytest';
@@ -17,9 +17,9 @@ negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 [imgList, labels] = loadImgList(posDir, negDir);
 
 %% compute contours, then features
-tic
-[dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, true, true);
-toc
+% tic
+% [dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, true, true);
+% toc
 % save(sprintf('dscASeg_%s_raw_20141005', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
 load(sprintf('../expData/dscASeg_%s_raw_20141005', opt));
 
@@ -48,21 +48,21 @@ load(sprintf('../expData/HH_dscA_notLine_%s_20141005', opt));
 load(sprintf('../expData/sigma_dscA_notLine_%s_20141005', opt));
 
 %% pooling
-% sampleNum = 10000;
-% poolMaxSize = 50000;
-% [dscANotLinePool, dscANotLinePoolOrder, dscANotLinePoolSigma, dscANotLinePoolH, dscANotLinePoolHH] = pooling(dscA_notLine_all, [], dscA_notLine_all_sigma, dscA_notLine_all_H, dscA_notLine_all_HH, sampleNum, poolMaxSize);
+sampleNum = 10000;
+poolMaxSize = 50000;
+[dscANotLinePool, dscANotLinePoolOrder, dscANotLinePoolSigma, dscANotLinePoolH, dscANotLinePoolHH] = pooling(dscA_notLine_all, [], dscA_notLine_all_sigma, dscA_notLine_all_H, dscA_notLine_all_HH, sampleNum, poolMaxSize);
 % save dscANotLinePool_20141005 dscANotLinePool dscANotLinePoolOrder dscANotLinePoolSigma dscANotLinePoolH dscANotLinePoolHH;
-load ../expData/dscANotLinePool_20141005;
+% load ../expData/dscANotLinePool_20141005;
 
 %% computer cluster centers
-nc = 5;
-load ../expData/ped_dscA_notLine_sD_20141005
-tic;
-[sLabel, centers, centers_sigma, centers_H, centers_HH, sD, centerInd] = nCutContourHHSigma(dscANotLinePool(1:10000), dscANotLinePoolSigma(:, 1:10000), dscANotLinePoolH(1:10000), dscANotLinePoolHH(1:10000), nc, alpha, sD);
-toc
-% save ped_dscA_notLine_sD_20141005 sD;
-save ped_dscA_notLine_centers5_a001_20141005 centers centers_sigma centers_H centers_HH centerInd sLabel;
-load ../expData/ped_dscA_notLine_centers5_a001_20141005
+nc = 100;
+% load ../expData/ped_dscA_notLine_sD_a0_20141005
+% tic;
+% [sLabel, centers, centers_sigma, centers_H, centers_HH, sD, centerInd] = nCutContourHHSigma(dscANotLinePool(1:10000), dscANotLinePoolSigma(:, 1:10000), dscANotLinePoolH(1:10000), dscANotLinePoolHH(1:10000), nc, alpha, sD);
+% toc
+% save ped_dscA_notLine_sD_a0_20141005 sD;
+% save ped_dscA_notLine_centers100_a0_20141005 centers centers_sigma centers_H centers_HH centerInd sLabel;
+load ../expData/ped_dscA_notLine_centers100_a0_20141005
 
 %% bow representation
 % featNotLine = bowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha);
@@ -85,13 +85,13 @@ for i = 1:length(slope_all)
 %     block_all{i} = genBlock(96, 160, 4, 5);
 end
 featLine = structureLineFeatAll(slope_all, nBins, points_line_all, block_all);
-% save(sprintf('featLine_%s_20141005', opt), 'featLine');
+% save(sprintf('featLine_%s_20141005', opt), 'featLine', 'labels');
 % load(sprintf('../expData/featLine_%s_20141005', opt));
 featLine = l2Normalization(featLine);
 
 %% structured non-line feature
 featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha, points_notLine_all, block_all);
-% save(sprintf('featNotLine_%s_a001_20141005', opt), 'featNotLine');
+% save(sprintf('featNotLine_%s_a0_20141005', opt), 'featNotLine', 'labels');
 % load(sprintf('../expData/featNotLine_%s_a001_20141005', opt));
 featNotLine = l2Normalization(featNotLine);
 
@@ -109,39 +109,39 @@ feat = [featNotLine; featLine];
 load ../expData/featLine_mytrain_20141005;
 % featLine = powerNormalization(featLine);
 featLine = l2Normalization(featLine);
-load ../expData/featNotLine_mytrain_a001_20141005;
+load ../expData/featNotLine_mytrain_a0_20141005;
 % featNotLine = powerNormalization(featNotLine);
 featNotLine = l2Normalization(featNotLine);
-feat = [featNotLine; featLine];
-% feat = featNotLine;
+% feat = [featNotLine; featLine];
+feat = featNotLine;
 % feat = featLine;
 % save feat_mytrain_l2Norm_a001_20141005 feat labels;
 % load ../expData/feat_mytrain_l2Norm_a001_20141005
-X_train1 = feat;
+X_train = feat;
 y_train = labels;
 
-load ../expData/featLine_mytest_20141005;
-% featLine = powerNormalization(featLine);
-featLine = l2Normalization(featLine);
-load ../expData/featNotLine_mytest_a001_20141005;
-% featNotLine = powerNormalization(featNotLine);
-featNotLine = l2Normalization(featNotLine);
-feat = [featNotLine; featLine];
-% feat = featNotLine;
-% feat = featLine;
-% save feat_mytest_l2Norm_a001_20141005 feat labels;
-% load ../expData/feat_mytest_l2Norm_a001_20141002
-X_test1 = feat;
-y_test = labels;
+% load ../expData/featLine_mytest_20141005;
+% % featLine = powerNormalization(featLine);
+% featLine = l2Normalization(featLine);
+% load ../expData/featNotLine_mytest_a001_20141005;
+% % featNotLine = powerNormalization(featNotLine);
+% featNotLine = l2Normalization(featNotLine);
+% feat = [featNotLine; featLine];
+% % feat = featNotLine;
+% % feat = featLine;
+% % save feat_mytest_l2Norm_a001_20141005 feat labels;
+% % load ../expData/feat_mytest_l2Norm_a001_20141002
+% X_test1 = feat;
+% y_test = labels;
 
-load ../expData/hog_train_20141006;
-% X_train = powerNormalization(X_train);
-% X_train = l2Normalization(X_train);
-load ../expData/hog_test_20141006;
-% X_test = powerNormalization(X_test);
-% X_test = l2Normalization(X_test);
-X_train = [X_train;X_train1];
-X_test = [X_test;X_test1];
+% load ../expData/hog_train_20141006;
+% % X_train = powerNormalization(X_train);
+% % X_train = l2Normalization(X_train);
+% load ../expData/hog_test_20141006;
+% % X_test = powerNormalization(X_test);
+% % X_test = l2Normalization(X_test);
+% X_train = [X_train;X_train1];
+% X_test = [X_test;X_test1];
 
 tic;[accMat, libsvmModel] = libsvmClassify(X_train, y_train);toc
 % tic;liblinearClassify(X_train, y_train, X_test, y_test);toc
