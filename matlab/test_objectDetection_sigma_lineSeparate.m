@@ -17,11 +17,11 @@ negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 [imgList, labels] = loadImgList(posDir, negDir);
 
 %% compute contours, then features
-% tic
-% [dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, true, true);
-% toc
-% save(sprintf('dscASeg_%s_raw_20141005', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
-load(sprintf('../expData/dscASeg_%s_raw_20141005', opt));
+tic
+[dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, false, true);
+toc
+save(sprintf('dscaSeg_%s_20141012', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
+load(sprintf('../expData/dscaSeg_%s_20141012', opt));
 
 %% filter the short curves
 [dscA_all, seg_all, dscA_ind] = filterWithFixedLengthAll(dscA_all, seg_all, 2*hankel_size);

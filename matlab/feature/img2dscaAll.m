@@ -18,15 +18,18 @@ dscA_all = cell(1, numImg);
 seg_all = cell(1, numImg);
 imgSize_all = zeros(numImg, 2);
 for i = 1:numImg
-    img_raw = im2double(imread(imgList{i}));
-    img = img_raw(margin+1:end-margin, margin+1:end-margin, :);
-    [dscA, seg, imgSize] = img2dscA(img, draw);
+    if verbose, fprintf('Processing image %d ... \n', i); end
+    try
+        load(sprintf('../expData/dscaSeg/dscaSeg_%s_20141012_%05d.mat', opt, i));
+    catch
+        img_raw = im2double(imread(imgList{i}));
+        img = img_raw(margin+1:end-margin, margin+1:end-margin, :);
+        [dscA, seg, imgSize] = img2dscA(img, draw);
+        save(sprintf('../expData/dscaSeg/dscaSeg_%s_20141012_%05d.mat', opt, i),'dscA','seg','imgSize');
+    end
     dscA_all{i} = dscA;
     seg_all{i} = seg;
     imgSize_all(i, :) = imgSize;
-    if verbose
-        fprintf('Processing image %d ... \n', i);
-    end
 end
 if verbose
     fprintf('Process finished!\n');

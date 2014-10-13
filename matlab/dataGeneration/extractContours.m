@@ -29,19 +29,24 @@ if draw
     figure, imshow(E);
     figure, imshow(BW);
 end
-% contour = extractContBW(BW);
-contour = extractContBW2(BW, E);
+contour = extractContBW(BW);
+% contour2 = extractContBW2(BW, E);
+
+if draw
+    showContours(contour, length(contour), 1:length(contour));
+%     showContours(contour2, length(contour2), 1:length(contour2));
+end
 
 % display contours
-numCont = numel(contour);
-imgSize = size(img);
-BW2 = zeros(imgSize(1:2));
-
-for i = 1:numCont
-    for j = 1:size(contour{i}, 1)
-        BW2(contour{i}(j, 1), contour{i}(j, 2)) = 1;
-    end
-end
+% numCont = numel(contour);
+% imgSize = size(img);
+% BW2 = zeros(imgSize(1:2));
+% 
+% for i = 1:numCont
+%     for j = 1:size(contour{i}, 1)
+%         BW2(contour{i}(j, 1), contour{i}(j, 2)) = 1;
+%     end
+% end
 % figure, imshow(BW2);
 
 % imgSize = size(img);

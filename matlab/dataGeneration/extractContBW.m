@@ -2,10 +2,10 @@
 
 function contour = extractContBW(BW)
 
+k = 1;
+minLen = 5;
 maxContourNum = 10000;
 contour = cell(maxContourNum, 1);
-k = 1;
-minLen = 10;
 
 % delete trivial endpoint
 cont_filter1 = [
@@ -123,27 +123,31 @@ for i = 1:length(contourz_all)
     % enforce contour to start and end with endpoint or crosspoint
     isEndPt = ismember(contourz, endpoint, 'rows');
     isCrossPt = ismember(contourz, crosspoint, 'rows');
-    if ~isempty(isEndPt)
+    if any(isEndPt)
         offset = find(isEndPt, 1);
-        contourz = circshift(contourz, 1-offset);
+        contourz = circshift(contourz(1:end-1, :), 1-offset);
         contourz(end+1, :) = contourz(1, :);
-    elseif ~isempty(isCrossPt)
+    elseif any(isCrossPt)
         offset = find(isCrossPt, 1);
-        contourz = circshift(contourz, 1-offset);
+        contourz = circshift(contourz(1:end-1, :), 1-offset);
         contourz(end+1, :) = contourz(1, :);
     end
 
     isEndPt = ismember(contourz, endpoint, 'rows');
     isCrossPt = ismember(contourz, crosspoint, 'rows');
     if any(isCrossPt)
-        seg = cell(1, nnz(isCrossPt));
-        segInd = zeros(nnz(isCrossPt), 2);
         crossPtInd = find(isCrossPt);
         endPtInd = find(isEndPt);
-        sortedInd = sort([crossPtInd; endPtInd]);
-        segInd(:, 1) = crossPtInd;
-        tmp = find(ismember(sortedInd, crossPtInd));
-        segInd(:, 2) = sortedInd(tmp + 1);
+        if isempty(endPtInd)
+            segInd = [crossPtInd(1:end-1) crossPtInd(2:end)];
+        else
+            segInd = zeros(nnz(isCrossPt), 2);
+            sortedInd = sort([crossPtInd; endPtInd]);
+            tmp = find(ismember(sortedInd, crossPtInd));
+            segInd(:, 1) = crossPtInd;
+            segInd(:, 2) = sortedInd(tmp + 1);
+        end
+        seg = cell(1, size(segInd, 1));
         for j = 1:size(segInd, 1)
             seg{j} = contourz(segInd(j, 1) : segInd(j, 2), :);
         end
@@ -159,8 +163,10 @@ for i = 1:length(contourz_all)
         k = k + 1;
     end
 end
+contour(k:end) = [];
 
 % % break at endpoints
+% minLen = 10;
 % contourz_all = bwboundaries(BW, 8);
 % len = cellfun(@length, contourz_all);
 % contourz_all(len < 5) = [];
@@ -203,6 +209,8 @@ end
 %     end
 % end
 
-contour(k:end) = [];
+
+len = cellfun(@length, contour);
+contour(len < minLen) = [];
 
 end
