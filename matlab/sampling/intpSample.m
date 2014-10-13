@@ -19,7 +19,7 @@ tail = func.breaks(end);
 intpData = fnval(func,head:intpStep:tail)';
 
 % compute the length of the input curve
-d = sqrt(sum(diff(intpData).^2,2));
+d = sqrt(sum(diff(intpData,1,1).^2,2));
 L = cumsum([0;d]);
 
 if mode == 1

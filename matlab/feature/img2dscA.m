@@ -19,17 +19,24 @@ end
 % rankminimization to reduce the effect of discretization
 hankel_size = 4;
 lambda = 5;
+try
 contour_clean = rankminimize(contour, hankel_size, imgSize, lambda);
+catch
+    keyboard;
+end
 
 % resample
 mode = 1; % fixed length
 fixedLen = 1;
 contour_clean = sampleAlongCurve(contour_clean, mode, fixedLen);
 
+% filter out short segments
+minLen = 3;
+[contour_clean] = filterContourWithFixedLength(contour_clean, minLen);
+
 numCont = numel(contour_clean);
 contourA = cell(1, numCont);         % cumulative angle
 dcontourA = cell(1, numCont);       % the derivative of cumulative angle
-
 for i = 1:numCont
     [~, contourA{i}, ~] = cumulativeAngle([contour_clean{i}(:, 2) contour_clean{i}(:, 1)]);
     dcontourA{i} = diff(contourA{i});
