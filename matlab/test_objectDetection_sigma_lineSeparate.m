@@ -55,14 +55,14 @@ poolMaxSize = 50000;
 % load ../expData/dscANotLinePool_20141005;
 
 %% computer cluster centers
-nc = 100;
-% load ../expData/ped_dscA_notLine_sD_a0_20141005
-% tic;
-% [sLabel, centers, centers_sigma, centers_H, centers_HH, sD, centerInd] = nCutContourHHSigma(dscANotLinePool(1:10000), dscANotLinePoolSigma(:, 1:10000), dscANotLinePoolH(1:10000), dscANotLinePoolHH(1:10000), nc, alpha, sD);
-% toc
+nc = 200;
+load ../expData/ped_dscA_notLine_sD_a0_20141005
+tic;
+[sLabel, centers, centers_sigma, centers_H, centers_HH, sD, centerInd] = nCutContourHHSigma(dscANotLinePool(1:10000), dscANotLinePoolSigma(:, 1:10000), dscANotLinePoolH(1:10000), dscANotLinePoolHH(1:10000), nc, alpha, sD);
+toc
 % save ped_dscA_notLine_sD_a0_20141005 sD;
-% save ped_dscA_notLine_centers100_a0_20141005 centers centers_sigma centers_H centers_HH centerInd sLabel;
-load ../expData/ped_dscA_notLine_centers100_a0_20141005
+% save ped_dscA_notLine_centers200_a0_20141005 centers centers_sigma centers_H centers_HH centerInd sLabel;
+load ../expData/ped_dscA_notLine_centers200_a0_20141005
 
 %% bow representation
 % featNotLine = bowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha);
@@ -91,7 +91,7 @@ featLine = l2Normalization(featLine);
 
 %% structured non-line feature
 featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha, points_notLine_all, block_all);
-% save(sprintf('featNotLine_%s_a0_20141005', opt), 'featNotLine', 'labels');
+save(sprintf('featNotLine_%s_a0_k%d_20141005', opt, nc), 'featNotLine', 'labels');
 % load(sprintf('../expData/featNotLine_%s_a001_20141005', opt));
 featNotLine = l2Normalization(featNotLine);
 
@@ -109,7 +109,7 @@ feat = [featNotLine; featLine];
 load ../expData/featLine_mytrain_20141005;
 % featLine = powerNormalization(featLine);
 featLine = l2Normalization(featLine);
-load ../expData/featNotLine_mytrain_a0_20141005;
+load ../expData/featNotLine_mytrain_a0_k200_20141005;
 % featNotLine = powerNormalization(featNotLine);
 featNotLine = l2Normalization(featNotLine);
 % feat = [featNotLine; featLine];
