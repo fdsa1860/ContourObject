@@ -49,16 +49,17 @@ for i=1:length(ids)
 
     try
         % try to load features
-        load(sprintf(VOCopts.exfdpath,ids{i}),'fd');
+        load(sprintf(VOCopts.exfdpath,ids{i}),'cont');
     catch
         % compute and save features
         I=imread(sprintf(VOCopts.imgpath,ids{i}));
 %         fd=extractfd(VOCopts,I);
-        fd = img2feat(I,0);
-        save(sprintf(VOCopts.exfdpath,ids{i}),'fd');
+        cont = img2cont(I,0);
+        save(sprintf(VOCopts.exfdpath,ids{i}),'cont');
     end
     
-    classifier.FD(1:length(fd),i)=fd;
+    feat = cont2feat(cont);
+    classifier.FD(1:length(feat),i) = feat;
     
 end
 
@@ -92,19 +93,20 @@ for i=1:length(ids)
     
     try
         % try to load features
-        load(sprintf(VOCopts.exfdpath,ids{i}),'fd');
+        load(sprintf(VOCopts.exfdpath,ids{i}),'cont');
     catch
         % compute and save features
         I=imread(sprintf(VOCopts.imgpath,ids{i}));
 %         fd=extractfd(VOCopts,I);
-        fd = img2feat(I,0);
-        save(sprintf(VOCopts.exfdpath,ids{i}),'fd');
+        cont = img2cont(I,0);
+        save(sprintf(VOCopts.exfdpath,ids{i}),'cont');
     end
     
-    fd_all(:, i) = fd;
+    feat = cont2feat(cont);
+    fd_all(:, i) = feat;
     % compute confidence of positive classification
 %     c=classify(VOCopts,classifier,fd);
-    [lb, acc, conf] = svmpredict(1, sparse(fd'), classifier.model);
+    [lb, acc, conf] = svmpredict(1, sparse(feat'), classifier.model);
     % write to results file
     fprintf(fid,'%s %f\n',ids{i},conf);
 end

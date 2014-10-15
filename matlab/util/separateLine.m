@@ -1,7 +1,11 @@
-function [dscA_line_all, dscA_notLine_all, seg_line_all, seg_notLine_all, points_line_all, points_notLine_all] = separateLine(dscA_all, seg_all, points_all, isLine_all, verbose)
+function [dscA_line_all, dscA_notLine_all, seg_line_all, seg_notLine_all, points_line_all, points_notLine_all] = separateLine(isLine_all, dscA_all, seg_all, points_all, verbose)
 
 if nargin < 5
     verbose = false;
+end
+
+if nargin < 4
+    points_all = [];
 end
 
 if verbose
@@ -20,8 +24,10 @@ for i = 1:numImg
     dscA_notLine_all{i} = dscA_all{i}(~isLine_all{i});
     seg_line_all{i} = seg_all{i}(isLine_all{i});
     seg_notLine_all{i} = seg_all{i}(~isLine_all{i});
-    points_line_all{i} = points_all{i}(isLine_all{i}, :);
-    points_notLine_all{i} = points_all{i}(~isLine_all{i}, :);
+    if ~isempty(points_all)
+        points_line_all{i} = points_all{i}(isLine_all{i}, :);
+        points_notLine_all{i} = points_all{i}(~isLine_all{i}, :);
+    end
 end
 
 if verbose
