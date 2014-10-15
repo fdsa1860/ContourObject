@@ -23,7 +23,12 @@ for i = 1:nBlocks
     D = dynamicDistanceSigmaCross(X_HH(isInside), centers_HH, X_sigma, centers_sigma, alpha);
     [val,ind] = min(D, [], 2);
     % get BOW representation
-    feat( (i-1)*k+1 : i*k ) = hist(ind, 1:k);
+    h = zeros(k, 1);
+    for j = 1:length(ind)
+        h(ind(j)) = h(ind(j)) + val(j);
+    end
+    feat( (i-1)*k+1 : i*k ) = h;
+%     feat( (i-1)*k+1 : i*k ) = hist(ind, 1:k);
 end
 
 end

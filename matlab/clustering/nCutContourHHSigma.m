@@ -27,7 +27,14 @@ end
 
 W = exp(-D);     % the similarity matrix
 NcutDiscrete = ncutW(W, k);
-label = sortLabel_sigma(NcutDiscrete, sigma);
+label = sortLabel_count(NcutDiscrete);
+
+% D1 = D(label==1, label==1);
+% W1 = exp(-D1);
+% NcutDiscrete1 = ncutW(W1, k);
+% label1 = sortLabel_count(NcutDiscrete1);
+% label(label==1) = k + label1;
+% label = sortLabel(label);
 
 centerInd = findCenters(D, label);
 centers = X(centerInd);
