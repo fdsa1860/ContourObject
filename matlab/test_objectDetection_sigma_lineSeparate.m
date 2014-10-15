@@ -5,7 +5,7 @@ clc;clear;close all;
 addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
-hankel_size = 7;
+hankel_size = 4;
 alpha = 0;
 
 opt = 'mytrain';
@@ -21,7 +21,7 @@ negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 % [dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, false, true);
 % toc
 % save(sprintf('dscaSeg_%s_20141005', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
-load(sprintf('../expData/dscASeg_%s_raw_20141005', opt));
+load(sprintf('../expData/dscASeg_%s_20141012', opt));
 
 %% filter the short curves
 [dscA_all, seg_all, dscA_ind] = filterWithFixedLengthAll(dscA_all, seg_all, 2*hankel_size);
@@ -56,14 +56,15 @@ poolMaxSize = 50000;
 % load ../expData/dscANotLinePool_20141005;
 
 %% computer cluster centers
-nc = 20;
-load ../expData/ped_dscA_notLine_long_sD_a0_h7_20141012
-tic;
-[sLabel, centers, centers_sigma, centers_H, centers_HH, sD, centerInd] = nCutContourHHSigma(dscANotLinePool(1:10000), dscANotLinePoolSigma(:, 1:10000), dscANotLinePoolH(1:10000), dscANotLinePoolHH(1:10000), nc, alpha, sD);
-toc
-% save ped_dscA_notLine_long_sD_a0_h7_20141012 sD;
-save ped_dscA_notLine_long_centers20x2_a0_h7_20141012 centers centers_sigma centers_H centers_HH centerInd sLabel;
-load ../expData/ped_dscA_notLine_long_centers20x2_a0_h7_20141012
+nc = 10;
+% load ../expData/ped_dscA_notLine_sD_a0_20141012
+% tic;
+% [centers, sLabel, sD] = nCutContourHHSigma(dscANotLinePool(1:10000), dscANotLinePoolSigma(:, 1:10000), dscANotLinePoolH(1:10000), dscANotLinePoolHH(1:10000), nc, alpha, sD);
+% toc
+% save ped_dscA_notLine_sD_a0_20141012 sD;
+% save ped_dscA_notLine_centers_w10_a0_h4_20141012 centers sLabel;
+load ../expData/ped_dscA_notLine_centers_w10_a0_h4_20141012
+
 
 %% bow representation
 % featNotLine = bowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha);
@@ -86,13 +87,13 @@ for i = 1:length(slope_all)
 %     block_all{i} = genBlock(96, 160, 4, 5);
 end
 featLine = structureLineFeatAll(slope_all, nBins, points_line_all, block_all);
-% save(sprintf('featLine_%s_h7_20141012', opt), 'featLine', 'labels');
+% save(sprintf('featLine_%s_h4_20141012', opt), 'featLine', 'labels');
 % load(sprintf('../expData/featLine_%s_20141005', opt));
 featLine = l2Normalization(featLine);
 
 %% structured non-line feature
-featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha, points_notLine_all, block_all);
-% save(sprintf('featNotLine_%s_c20_a0_h7_20141012', opt), 'featNotLine', 'labels');
+featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_HH, dscA_notLine_all_sigma, centers, alpha, points_notLine_all, block_all);
+% save(sprintf('featNotLine_%s_c10_a0_h4_20141012', opt), 'featNotLine', 'labels');
 % load(sprintf('../expData/featNotLine_%s_a001_20141005', opt));
 featNotLine = l2Normalization(featNotLine);
 
@@ -107,10 +108,10 @@ feat = [featNotLine; featLine];
 
 %% svm classification to test how hard the data is to classify
 % load feature data
-% load ../expData/featLine_mytrain_20141012;
+% load ../expData/featLine_mytrain_h4_20141012;
 % featLine = powerNormalization(featLine);
 % featLine = l2Normalization(featLine);
-% load ../expData/featNotLine_mytrain_a0_20141012;
+% load ../expData/featNotLine_mytrain_c10_a0_h4_20141012;
 % featNotLine = powerNormalization(featNotLine);
 % featNotLine = l2Normalization(featNotLine);
 % feat = [featNotLine; featLine];

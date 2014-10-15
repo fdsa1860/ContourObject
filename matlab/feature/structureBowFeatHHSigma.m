@@ -1,4 +1,4 @@
-function feat = structureBowFeatHHSigma(X_HH, centers_HH, X_sigma, centers_sigma, alpha, pts, block)
+function feat = structureBowFeatHHSigma(X_HH, X_sigma, centers, alpha, pts, block)
 % Input:
 % HH1: 1 by N cell, data to be represented
 % HH2: 1 by K cell, cluster centers
@@ -12,23 +12,29 @@ if nargin < 5
     alpha = 1;
 end
 
-k = length(centers_HH);
+k = length(centers.centerInd);
 nBlocks = size(block, 1);
 feat = zeros(nBlocks * k, 1);
 
 for i = 1:nBlocks
     isInside = pts(:, 1)>=block(i, 1) & pts(:, 1)<=block(i, 3) & ...
         pts(:, 2)>=block(i, 2) & pts(:, 2)<=block(i, 4);
-    % get distance matrix D
-    D = dynamicDistanceSigmaCross(X_HH(isInside), centers_HH, X_sigma, centers_sigma, alpha);
-    [val,ind] = min(D, [], 2);
-    % get BOW representation
-    h = zeros(k, 1);
-    for j = 1:length(ind)
-        h(ind(j)) = h(ind(j)) + val(j);
-    end
-    feat( (i-1)*k+1 : i*k ) = h;
+    % get distance matrix D: n-by-k matrix
+    D = dynamicDistanceSigmaCross(X_HH(isInside), centers.HH, X_sigma, centers.sigma, alpha);
+%     % hard voting
+%     [val,ind] = min(D, [], 2);
 %     feat( (i-1)*k+1 : i*k ) = hist(ind, 1:k);
+%     % soft voting
+%     W = exp(-10*D);
+%     h = sum(W);
+%     feat( (i-1)*k+1 : i*k ) = h;
+    % probability voting
+    W = zeros(size(D));
+    for j = 1:k
+        W(:, j) =  exp(-centers.beta(j) * D(:, j));
+    end
+    feat( (i-1)*k+1 : i*k ) = sum(W);
+
 end
 
 end
