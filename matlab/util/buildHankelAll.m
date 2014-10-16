@@ -1,4 +1,4 @@
-function [H_all, HH_all] = buildHankelAll(X_all, hankel_size, mode, verbose)
+function [Y_all] = buildHankelAll(X_all, hankel_size, mode, verbose)
 % Input:
 % X_all: data to build hankel matrix
 % hankel_size: when mode 1, number of rows of hankel matrix, when mode 2,
@@ -18,23 +18,18 @@ if verbose
 end
 
 numImg = length(X_all);
-H_all = cell(1, numImg);
-HH_all = cell(1, numImg);
+Y_all(1:numImg) = struct('seg',[]);
 for i = 1:numImg
     X = X_all{i};
     numSeg = length(X);
     if numSeg == 0
-        H_all{i} = [];
-        HH_all{i} = [];
         continue;
     end
-    H = cell(1, numSeg);
-    HH = cell(1, numSeg);
+    Y(1:numSeg) = struct('H',[],'HH',[]);
     for j = 1:numSeg
-        [H{j}, HH{j}] = buildHankel(X{j}, hankel_size, mode);
+        [Y(j).H, Y(j).HH] = buildHankel(X{j}, hankel_size, mode);
     end
-    H_all{i} = H;
-    HH_all{i} = HH;
+    Y_all(i).seg = Y;
 end
 
 if verbose

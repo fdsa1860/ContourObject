@@ -8,7 +8,7 @@ if verbose
     fprintf('getting BOW representation ...');
 end
 
-nc = length(centers.centerInd);
+nc = length(centers);
 numImg = length(X_all_HH);
 nBlocks = size(block_all{1}, 1);
 feat = zeros(nc * nBlocks, numImg);

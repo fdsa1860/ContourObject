@@ -39,12 +39,12 @@ isLine_all = dscaLineDetectAll(dscA_all);
 % [dscA_line_all, dscA_notLine_all, seg_line_all, seg_notLine_all, points_line_all, points_notLine_all] = separateLine(isLine_all, dscA_all, seg_all, [], true);
 
 %% build hankel matrix
-[dscA_notLine_all_H, dscA_notLine_all_HH] = buildHankelAll(dscA_notLine_all, hankel_size, 1, true);
+[dscA_notLine_all_data] = buildHankelAll(dscA_notLine_all, hankel_size, 1, true);
 % save(sprintf('HH_dscA_notLine_%s_20141005', opt), 'dscA_notLine_all_H', 'dscA_notLine_all_HH');
 % load(sprintf('../expData/HH_dscA_notLine_%s_20141005', opt));
 
 %% normalized singular value estimation
-dscA_notLine_all_sigma = sigmaEstAll(dscA_notLine_all_H, []);
+dscA_notLine_all_data = sigmaEstAll(dscA_notLine_all_data);
 % save(sprintf('sigma_dscA_notLine_%s_20141005', opt), 'dscA_notLine_all_sigma');
 % load(sprintf('../expData/sigma_dscA_notLine_%s_20141005', opt));
 

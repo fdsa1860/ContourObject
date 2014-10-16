@@ -12,7 +12,7 @@ if nargin < 5
     alpha = 1;
 end
 
-k = length(centers.centerInd);
+k = length(centers);
 nBlocks = size(block, 1);
 feat = zeros(nBlocks * k, 1);
 
@@ -20,20 +20,22 @@ for i = 1:nBlocks
     isInside = pts(:, 1)>=block(i, 1) & pts(:, 1)<=block(i, 3) & ...
         pts(:, 2)>=block(i, 2) & pts(:, 2)<=block(i, 4);
     % get distance matrix D: n-by-k matrix
-    D = dynamicDistanceSigmaCross(X_HH(isInside), centers.HH, X_sigma, centers.sigma, alpha);
+    D = dynamicDistanceSigmaCross(X_HH(isInside), X_sigma, centers, alpha);
+    
 %     % hard voting
 %     [val,ind] = min(D, [], 2);
 %     feat( (i-1)*k+1 : i*k ) = hist(ind, 1:k);
-%     % soft voting
-%     W = exp(-10*D);
-%     h = sum(W);
-%     feat( (i-1)*k+1 : i*k ) = h;
-    % probability voting
-    W = zeros(size(D));
-    for j = 1:k
-        W(:, j) =  exp(-centers.beta(j) * D(:, j));
-    end
+
+    % soft voting
+    W = exp(-10*D);
     feat( (i-1)*k+1 : i*k ) = sum(W);
+    
+%     % probability voting
+%     W = zeros(size(D));
+%     for j = 1:k
+%         W(:, j) =  exp(- centers(j).beta * D(:, j));
+%     end
+%     feat( (i-1)*k+1 : i*k ) = sum(W);
 
 end
 

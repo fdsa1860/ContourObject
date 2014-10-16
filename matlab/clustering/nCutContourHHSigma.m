@@ -32,6 +32,13 @@ if nargin < 7
     D = dynamicDistanceSigma(HH, 1:length(sigma), sigma, alpha);
 end
 
+centers(1:k) = struct('centerInd',  0,  ...
+                        'data',     [], ...
+                        'sigma',    [], ...
+                        'H',        [], ...
+                        'HH',       [],    ...
+                        'beta',     0);
+
 W = exp(-D);     % the similarity matrix
 NcutDiscrete = ncutW(W, k);
 label = sortLabel_count(NcutDiscrete);
@@ -56,11 +63,14 @@ for i = 1:k
     beta(i) = 1 / (sum(p .* t * delta_t) + 1e-6);
 end
 
-centers.centerInd = centerInd;
-centers.data = X(centerInd);
-centers.sigma = sigma(:, centerInd);
-centers.H = H(centerInd);
-centers.HH = HH(centerInd);
-centers.beta = beta;
+for i = 1:k
+    ind = centerInd(i);
+    centers(i).centerInd = ind;
+    centers(i).data = X{ind};
+    centers(i).sigma = sigma(:, ind);
+    centers(i).H = H{ind};
+    centers(i).HH = HH{ind};
+    centers(i).beta = beta(i);
+end
 
 end
