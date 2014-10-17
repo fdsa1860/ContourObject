@@ -1,12 +1,9 @@
-function [centers, label, D] = nCutContourHHSigma(X, sigma, H, HH, k, alpha, D)
+function [centers, label, D] = nCutContourHHSigma(X, k, alpha, D)
 % nCutContourHHSigma: cluster data using hankelet metric and normalized
 % sigular values
 %
 % Input:
 % X: an N-by-1 cell vector, data to cluster
-% sigma: N-by-1 vector, the normalized singular value information of X
-% H: N-by-1 cell, the hankel matrix of each X
-% HH: N-by-1 cell, the normalized hankel matrix of each X
 % k: the number of clusters
 % alpha: the distance metric parameter, affects the significance of the
 % order difference information
@@ -20,16 +17,12 @@ function [centers, label, D] = nCutContourHHSigma(X, sigma, H, HH, k, alpha, D)
 % label: the clustered labeling results
 % D: distance matrix
 
-if nargin < 5
-    k = numel(unique(sigma));
+if nargin < 3
+    alpha = 0;
 end
 
-if nargin < 6
-    alpha = 1;
-end
-
-if nargin < 7
-    D = dynamicDistanceSigma(HH, 1:length(sigma), sigma, alpha);
+if nargin < 4
+    D = dynamicDistanceSigma(X, alpha);
 end
 
 centers(1:k) = struct('centerInd',  0,  ...
@@ -43,6 +36,7 @@ W = exp(-D);     % the similarity matrix
 NcutDiscrete = ncutW(W, k);
 label = sortLabel_count(NcutDiscrete);
 
+% ncut again on the first cluster
 % D1 = D(label==1, label==1);
 % W1 = exp(-D1);
 % NcutDiscrete1 = ncutW(W1, k);
@@ -66,10 +60,10 @@ end
 for i = 1:k
     ind = centerInd(i);
     centers(i).centerInd = ind;
-    centers(i).data = X{ind};
-    centers(i).sigma = sigma(:, ind);
-    centers(i).H = H{ind};
-    centers(i).HH = HH{ind};
+    centers(i).data = X(ind).dsca;
+    centers(i).sigma = X(ind).sigma;
+    centers(i).H = X(ind).H;
+    centers(i).HH = X(ind).HH;
     centers(i).beta = beta(i);
 end
 

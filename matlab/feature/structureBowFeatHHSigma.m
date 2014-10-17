@@ -1,7 +1,7 @@
-function feat = structureBowFeatHHSigma(X_HH, X_sigma, centers, alpha, pts, block)
+function feat = structureBowFeatHHSigma(X, centers, alpha, pts, block)
 % Input:
-% HH1: 1 by N cell, data to be represented
-% HH2: 1 by K cell, cluster centers
+% X: 1 by N cell, data to be represented
+% centers: 1 by K cell, cluster centers
 % sigma1: D by N vector
 % sigma2: D by K vector
 % alpha: the weight of order in distance metric
@@ -9,7 +9,7 @@ function feat = structureBowFeatHHSigma(X_HH, X_sigma, centers, alpha, pts, bloc
 % feat: bag of words representation
 
 if nargin < 5
-    alpha = 1;
+    alpha = 0;
 end
 
 k = length(centers);
@@ -20,7 +20,7 @@ for i = 1:nBlocks
     isInside = pts(:, 1)>=block(i, 1) & pts(:, 1)<=block(i, 3) & ...
         pts(:, 2)>=block(i, 2) & pts(:, 2)<=block(i, 4);
     % get distance matrix D: n-by-k matrix
-    D = dynamicDistanceSigmaCross(X_HH(isInside), X_sigma, centers, alpha);
+    D = dynamicDistanceSigmaCross(X(isInside), centers, alpha);
     
 %     % hard voting
 %     [val,ind] = min(D, [], 2);

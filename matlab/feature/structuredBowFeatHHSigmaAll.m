@@ -1,6 +1,6 @@
-function feat = structuredBowFeatHHSigmaAll(X_all_HH, X_all_sigma, centers, alpha, points_notLine_all, block_all, verbose)
+function feat = structuredBowFeatHHSigmaAll(X_all, centers, alpha, points_notLine_all, block_all, verbose)
 
-if nargin < 7
+if nargin < 6
     verbose = false;
 end
 
@@ -9,14 +9,14 @@ if verbose
 end
 
 nc = length(centers);
-numImg = length(X_all_HH);
+numImg = length(X_all);
 nBlocks = size(block_all{1}, 1);
 feat = zeros(nc * nBlocks, numImg);
 for i = 1:numImg
-    if isempty(X_all_HH{i})
+    if isempty(X_all{i})
         continue;
     end
-    feat(:,i) = structureBowFeatHHSigma(X_all_HH{i}, X_all_sigma{i}, centers, alpha, points_notLine_all{i}, block_all{i});
+    feat(:,i) = structureBowFeatHHSigma(X_all{i}, centers, alpha, points_notLine_all{i}, block_all{i});
 end
 
 if verbose

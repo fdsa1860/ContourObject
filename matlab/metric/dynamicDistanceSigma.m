@@ -1,37 +1,32 @@
 % Calculate the dynamic distances between any two Hankel matrices
 % Input:
-%    HHp: the normalized Hankel matrix
-%    index: determine which ones as the referent index and then
-%              calculate the distances between the referent index and others
-%    sigma: the singular values of the hankel matrices
+%    X: data that contains the normalized Hankel matrix
 %    alpha: the weight of the order difference in the distance metric
 % Output:
 %    D: the distance matrix
 
-function D = dynamicDistanceSigma(HHp, index, sigma, alpha)
+function D = dynamicDistanceSigma(X, alpha)
 
-if nargin < 4
-    alpha = 1;
-end
-if nargin < 3
-    sigma = [];
+if nargin < 2
+    alpha = 0;
 end
 
-n = numel(HHp);
-m = numel(index);
-D = zeros(m, n);
+n = numel(X);
+D = zeros(n);
 
-for i = 1:m
-    for j = 1:n
-        if isempty(sigma)
-            D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
-        elseif all(sigma(:,index(i)) == 0) || all(sigma(:,j) == 0)
+for i = 1:n
+    for j = i+1:n
+        if isempty(X(i).sigma) || isempty(X(j).sigma)
+            D(i, j) = abs(2 - norm(X(i).HH + X(j).HH, 'fro'));
+        elseif all(X(i).sigma == 0) || all(X(j).sigma == 0)
             D(i, j) = 0;
         else
-            D(i, j) = abs(2 - norm(HHp{i} + HHp{j}, 'fro'));
+            D(i, j) = abs(2 - norm(X(i).HH + X(j).HH, 'fro'));
         end
-        D(i, j) = D(i, j) + alpha * norm(sigma(:, index(i)) - sigma(:, j));
+        D(i, j) = D(i, j) + alpha * norm(X(i).sigma - X(j).sigma);
     end
 end
+
+D = D + D';
 
 end

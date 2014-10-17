@@ -51,7 +51,7 @@ dscA_notLine_all_data = sigmaEstAll(dscA_notLine_all_data);
 %% pooling
 sampleNum = 10000;
 poolMaxSize = 50000;
-[dscANotLinePool, dscANotLinePoolOrder, dscANotLinePoolSigma, dscANotLinePoolH, dscANotLinePoolHH] = pooling(dscA_notLine_all, [], dscA_notLine_all_sigma, dscA_notLine_all_H, dscA_notLine_all_HH, sampleNum, poolMaxSize);
+dscANotLinePool = pooling(dscA_notLine_all_data, sampleNum, poolMaxSize);
 % save dscANotLinePool_20141005 dscANotLinePool dscANotLinePoolOrder dscANotLinePoolSigma dscANotLinePoolH dscANotLinePoolHH;
 % load ../expData/dscANotLinePool_20141005;
 
@@ -59,26 +59,14 @@ poolMaxSize = 50000;
 nc = 10;
 % load ../expData/ped_dscA_notLine_sD_a0_20141012
 % tic;
-% [centers, sLabel, sD] = nCutContourHHSigma(dscANotLinePool(1:10000), dscANotLinePoolSigma(:, 1:10000), dscANotLinePoolH(1:10000), dscANotLinePoolHH(1:10000), nc, alpha, sD);
+% [centers, sLabel, sD] = nCutContourHHSigma(dscANotLinePool(1:10000), nc, alpha);
 % toc
 % save ped_dscA_notLine_sD_a0_20141012 sD;
 % save ped_dscA_notLine_centers_w10_a0_h4_20141012 centers sLabel;
 load ../expData/ped_dscA_notLine_centers_w10_a0_h4_20141012
 
-
-%% bow representation
-% featNotLine = bowFeatHHSigmaAll(dscA_notLine_all_HH, centers_HH, dscA_notLine_all_sigma, centers_sigma, alpha);
-% % save feat_notLine_mytrain_sigma_a001_20141002 featNotLine labels;
-% % load ../expData/feat_notLine_mytrain_sigma_a001_20141002
-
 %% estimate line slope
 slope_all = slopeEstAll(seg_line_all);
-
-% %% line feature
-nBins = 9;
-% featLine = lineFeatAll(slope_all, nBins);
-% % normalize
-% featLine = l2Normalization(featLine);
 
 %% structured line feature
 block_all = cell(1, length(slope_all));
@@ -86,13 +74,16 @@ for i = 1:length(slope_all)
     block_all{i} = genBlock(imgSize_all(i,2), imgSize_all(i,1), 1, 4);
 %     block_all{i} = genBlock(96, 160, 4, 5);
 end
+
+%% structured line feature
+nBins = 9;
 featLine = structureLineFeatAll(slope_all, nBins, points_line_all, block_all);
 % save(sprintf('featLine_%s_h4_20141012', opt), 'featLine', 'labels');
 % load(sprintf('../expData/featLine_%s_20141005', opt));
 featLine = l2Normalization(featLine);
 
 %% structured non-line feature
-featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_HH, dscA_notLine_all_sigma, centers, alpha, points_notLine_all, block_all);
+featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_data, centers, alpha, points_notLine_all, block_all);
 % save(sprintf('featNotLine_%s_c10_a0_h4_20141012', opt), 'featNotLine', 'labels');
 % load(sprintf('../expData/featNotLine_%s_a001_20141005', opt));
 featNotLine = l2Normalization(featNotLine);

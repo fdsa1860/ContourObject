@@ -18,18 +18,20 @@ if verbose
 end
 
 numImg = length(X_all);
-Y_all(1:numImg) = struct('seg',[]);
+Y_all = cell(1, numImg);
 for i = 1:numImg
     X = X_all{i};
     numSeg = length(X);
     if numSeg == 0
         continue;
     end
-    Y(1:numSeg) = struct('H',[],'HH',[]);
+    seg(1:numSeg) = struct('dsca',[], 'H',[], 'HH',[]);
     for j = 1:numSeg
-        [Y(j).H, Y(j).HH] = buildHankel(X{j}, hankel_size, mode);
+        seg(j).dsca = X{j};
+        [seg(j).H, seg(j).HH] = buildHankel(X{j}, hankel_size, mode);
     end
-    Y_all(i).seg = Y;
+    Y_all{i} = seg;
+    seg = struct('dsca',[], 'H',[], 'HH',[]);
 end
 
 if verbose

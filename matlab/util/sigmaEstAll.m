@@ -15,10 +15,10 @@ end
 
 numImg = length(X_all);
 for i = 1:numImg
-    if isempty(X_all(i).seg)
+    if isempty(X_all{i})
         continue;
     end
-    X_all(i).seg = sigmaEst(X_all(i).seg);
+    X_all{i} = sigmaEst(X_all{i});
 end
 
 if verbose
