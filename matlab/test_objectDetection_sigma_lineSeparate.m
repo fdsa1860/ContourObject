@@ -39,7 +39,7 @@ isLine_all = dscaLineDetectAll(dscA_all);
 % [dscA_line_all, dscA_notLine_all, seg_line_all, seg_notLine_all, points_line_all, points_notLine_all] = separateLine(isLine_all, dscA_all, seg_all, [], true);
 
 %% build hankel matrix
-[dscA_notLine_all_data] = buildHankelAll(dscA_notLine_all, hankel_size, 1, true);
+dscA_notLine_all_data = buildHankelAll(dscA_notLine_all, hankel_size, 1, true);
 % save(sprintf('HH_dscA_notLine_%s_20141005', opt), 'dscA_notLine_all_H', 'dscA_notLine_all_HH');
 % load(sprintf('../expData/HH_dscA_notLine_%s_20141005', opt));
 
@@ -49,9 +49,8 @@ dscA_notLine_all_data = sigmaEstAll(dscA_notLine_all_data);
 % load(sprintf('../expData/sigma_dscA_notLine_%s_20141005', opt));
 
 %% pooling
-sampleNum = 10000;
 poolMaxSize = 50000;
-dscANotLinePool = pooling(dscA_notLine_all_data, sampleNum, poolMaxSize);
+dscANotLinePool = pooling(dscA_notLine_all_data, poolMaxSize);
 % save dscANotLinePool_20141005 dscANotLinePool dscANotLinePoolOrder dscANotLinePoolSigma dscANotLinePoolH dscANotLinePoolHH;
 % load ../expData/dscANotLinePool_20141005;
 

@@ -1,4 +1,4 @@
-function feat = structuredBowFeatHHSigmaAll(X_all, centers, alpha, points_notLine_all, block_all, verbose)
+function feat = structureBowFeatHHSigmaAll(X_all, centers, alpha, points_notLine_all, block_all, verbose)
 
 if nargin < 6
     verbose = false;

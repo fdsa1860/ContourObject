@@ -1,19 +1,15 @@
-function [Y] = pooling(X_all, sampleNum, poolMaxSize)
+function [Y] = pooling(X_all, poolMaxSize)
 
 if nargin < 2
-    sampleNum = 1000;
-end
-if nargin < 3
     poolMaxSize = 10000;
 end
 
 rng('default');
 nX = length(X_all);
-assert(nX > sampleNum);
-ri = randi(nX, sampleNum, 1);
+ri = randperm(nX);
 Y(1:poolMaxSize) = struct('dsca',[], 'H', [], 'HH',[], 'sigma',[]);
 counter = 0;
-for i = 1:sampleNum
+for i = 1:nX
     X = X_all{ri(i)};
     nd = length(X);
     counterEnd = counter + nd;

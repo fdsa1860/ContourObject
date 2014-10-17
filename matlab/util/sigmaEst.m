@@ -5,7 +5,11 @@ function seg = sigmaEst(seg)
 % seg.sigma: D by N matrix, each column contains normalize singular value
 % vector
 
-assert(~isempty(seg));
+if isempty(seg)
+    seg().sigma = [];
+    return;
+end
+
 numSeg = length(seg);
 for i = 1:numSeg
     s = svd(seg(i).H);
