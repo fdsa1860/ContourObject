@@ -70,41 +70,38 @@ slope_all = slopeEstAll(seg_line_all);
 %% structured line feature
 block_all = cell(1, length(slope_all));
 for i = 1:length(slope_all)
-    block_all{i} = genBlock(imgSize_all(i,2), imgSize_all(i,1), 1, 4);
+    block_all{i} = genBlock(imgSize_all(i,2), imgSize_all(i,1), 4, 16);
 %     block_all{i} = genBlock(96, 160, 4, 5);
 end
 
-%% structured line feature
+% structured line feature
 nBins = 9;
 featLine = structureLineFeatAll(slope_all, nBins, points_line_all, block_all);
-% save(sprintf('featLine_%s_h4_20141012', opt), 'featLine', 'labels');
+% save(sprintf('featLine_%s_h4_wd4ht16_20141012', opt), 'featLine', 'labels');
 % load(sprintf('../expData/featLine_%s_20141005', opt));
 featLine = l2Normalization(featLine);
 
-%% structured non-line feature
-featNotLine = structuredBowFeatHHSigmaAll(dscA_notLine_all_data, centers, alpha, points_notLine_all, block_all);
-% save(sprintf('featNotLine_%s_c10_a0_h4_20141012', opt), 'featNotLine', 'labels');
+% structured non-line feature
+featNotLine = structureBowFeatHHSigmaAll(dscA_notLine_all_data, centers, alpha, points_notLine_all, block_all);
+% save(sprintf('featNotLine_%s_c10_a0_h4_wd4ht16_20141012', opt), 'featNotLine', 'labels');
 % load(sprintf('../expData/featNotLine_%s_a001_20141005', opt));
 featNotLine = l2Normalization(featNotLine);
 
-%% concatenate line feature and not-line feature
+% concatenate line feature and not-line feature
 feat = [featNotLine; featLine];
 % feat = l2Normalization(feat);
 % feat = featNotLine;
 % feat = featLine;
 
-
-%% display
-
 %% svm classification to test how hard the data is to classify
 % load feature data
-% load ../expData/featLine_mytrain_h4_20141012;
+load ../expData/featLine_mytrain_h4_wd4ht16_20141012;
 % featLine = powerNormalization(featLine);
-% featLine = l2Normalization(featLine);
-% load ../expData/featNotLine_mytrain_c10_a0_h4_20141012;
+featLine = l2Normalization(featLine);
+load ../expData/featNotLine_mytrain_c10_a0_h4_wd4ht16_20141012;
 % featNotLine = powerNormalization(featNotLine);
-% featNotLine = l2Normalization(featNotLine);
-% feat = [featNotLine; featLine];
+featNotLine = l2Normalization(featNotLine);
+feat = [featNotLine; featLine];
 % feat = featNotLine;
 % feat = featLine;
 % save feat_mytrain_l2Norm_a001_20141005 feat labels;
@@ -132,7 +129,7 @@ y_train = labels;
 % load ../expData/hog_test_20141006;
 % % X_test = powerNormalization(X_test);
 % % X_test = l2Normalization(X_test);
-% X_train = [X_train;X_train1];
+% X_train = [X_train];
 % X_test = [X_test;X_test1];
 
 tic;[accMat, libsvmModel] = libsvmClassify(X_train, y_train);toc

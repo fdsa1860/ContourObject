@@ -24,14 +24,18 @@ for i = 1:numSeg
 end
 % normalized singular value estimation
 try
-dscaNotLine_data = sigmaEst(dscaNotLine_data);
+    dscaNotLine_data = sigmaEst(dscaNotLine_data);
 catch
     keyboard;
 end
 % structured non-line feature
 alpha = 0;
-featNotLine = structureBowFeatHHSigma(dscaNotLine_data, centers, alpha, cont.points_notLine, block);
-featNotLine = l2Normalization(featNotLine);
+if isempty(centers)
+    featNotLine = [];
+else
+    featNotLine = structureBowFeatHHSigma(dscaNotLine_data, centers, alpha, cont.points_notLine, block);
+    featNotLine = l2Normalization(featNotLine);
+end
 
 feat = [featLine; featNotLine];
 cont.block = block;
