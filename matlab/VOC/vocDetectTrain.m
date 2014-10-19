@@ -10,8 +10,7 @@ detector.bbox=[];
 detector.gt=[];
 dscaNotLineAll = cell(1, length(ids));
 tic;
-% for i=1:length(ids)
-    for i=1:100
+for i=1:length(ids)
     % display progress
     if toc>1
         fprintf('%s: train: %d/%d\n',cls,i,length(ids));
