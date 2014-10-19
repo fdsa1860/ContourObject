@@ -1,8 +1,17 @@
-function [feat, cont] = cont2feat(cont, centers)
+function [feat, cont] = cont2feat(cont, centers, bbox)
+
+if isempty(centers)
+    feat = [];
+    return;
+end
+
+if nargin < 3
+    bbox = [1 1 cont.imgSize(2) cont.imgSize(1)];
+end
 
 nBins = 9;
 % build block
-block = genBlock(cont.imgSize(2), cont.imgSize(1), 1, 4);
+block = genBlock(bbox, 4, 16);
 % nBlocks = size(block, 1);
 % feat = zeros(nBlocks*nBins, 1);
 
@@ -30,12 +39,8 @@ catch
 end
 % structured non-line feature
 alpha = 0;
-if isempty(centers)
-    featNotLine = [];
-else
-    featNotLine = structureBowFeatHHSigma(dscaNotLine_data, centers, alpha, cont.points_notLine, block);
-    featNotLine = l2Normalization(featNotLine);
-end
+featNotLine = structureBowFeatHHSigma(dscaNotLine_data, centers, alpha, cont.points_notLine, block);
+featNotLine = l2Normalization(featNotLine);
 
 feat = [featLine; featNotLine];
 cont.block = block;

@@ -1,5 +1,5 @@
 % run classifier on test images
-function vocClsfTest(VOCopts,cls,classifier)
+function vocClsfTest(VOCopts,cls,classifier,centers)
 
 % load test set ('val' for development kit)
 % [ids,gt]=textread(sprintf(VOCopts.imgsetpath,VOCopts.testset),'%s %d');
@@ -16,7 +16,6 @@ fid=fopen(sprintf(VOCopts.clsrespath,'comp1',cls),'w');
 % classify each image
 tic;
 % fd_all = zeros(36, length(ids));
-load ../expData/voc_dsca_notLine_centers_w10_a0_h4_20141016;
 for i=1:length(ids)
     % display progress
     if toc>1
