@@ -28,7 +28,7 @@ for i = 1:nBlocks
 
     % soft voting
     W = exp(-10*D);
-    feat( (i-1)*k+1 : i*k ) = sum(W);
+    feat( (i-1)*k+1 : i*k ) = sum(W, 1);
     
 %     % probability voting
 %     W = zeros(size(D));

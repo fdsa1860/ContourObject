@@ -1,17 +1,25 @@
 function feat = structureFeat(seg, block)
 
-k = seg.featLen;
+if isempty(seg)
+    feat = [];
+    return;
+end
+
+k = seg(1).featLen;
 nBlocks = size(block, 1);
 feat = zeros(nBlocks * k, 1);
 pts = cat(1, seg.points);
+isLine = repmat(seg(1).lineFeatInd,[nBlocks, 1]);
 
 for i = 1:nBlocks
     isInside = pts(:, 1)>=block(i, 1) & pts(:, 1)<=block(i, 3) & ...
         pts(:, 2)>=block(i, 2) & pts(:, 2)<=block(i, 4);
-    W = cat(1, seg(isInside).feat);
-    f = sum(W);
-    f(seg.lineFeatInd) = l2Normalization(f(seg.lineFeatInd));
-    f(seg.notLineFeatInd) = l2Normalization(f(seg.notLineFeatInd));
+    if ~any(isInside)
+        continue;
+    end
+    W = cat(2, seg(isInside).feat);
+    f = sum(W, 2);
+
     feat( (i-1)*k+1 : i*k ) = f;
     
 %     % probability voting
@@ -22,5 +30,8 @@ for i = 1:nBlocks
 %     feat( (i-1)*k+1 : i*k ) = sum(W);
 
 end
+
+feat(isLine) = l2Normalization(feat(isLine));
+feat(~isLine) = l2Normalization(feat(~isLine));
 
 end
