@@ -42,7 +42,7 @@ for i=1:length(ids)
 
     % write to results file
     for j=1:length(c)
-        fprintf(fid,'%s %f %d %d %d %d\n',ids{i},c(j),BB(:,j));
+        fprintf(fid,'%s %f %d %d %d %d\n',ids{i},c(j),BB(j,:));
     end
 end
 
