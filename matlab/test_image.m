@@ -3,14 +3,12 @@ close all;clear;clc;
 addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
-
-
 % load image
-% img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
+img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
 % img = im2double(imread('../inputData/image/241004.jpg'));
 % img = im2double(imread('../inputData/image/kids.png'));
-img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
+% img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
 
 imgSize = size(img);
 
@@ -23,8 +21,7 @@ minLen = 2*hankel_size+2;
 % 2 is Structured edge for natural image (P. Dollar's Method)
 contour = extractContours(img, 2, 1);
 
-%%
-% rankminimization to reduce the effect of discretization
+%% rankminimization to reduce the effect of discretization
 Size = imgSize(1:2);
 lambda = 5;
 contour_clean = rankminimize(contour, hankel_size, Size, lambda);

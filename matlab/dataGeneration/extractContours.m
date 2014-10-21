@@ -17,8 +17,10 @@ end
 if method == 1         % Canny
     img_bw = im2bw(img, 0.8);
     BW = im2double(edge(img_bw, 'canny'));    
-elseif method == 2    % Structure edge  
-    load('structured edge detector/models/forest/modelFinal.mat');
+elseif method == 2    % Structure edge
+%     load('structured edge detector/models/forest/modelFinal.mat');
+    model=load('models/forest/modelBsds'); model=model.model;
+    model.opts.multiscale=0; model.opts.sharpen=2; model.opts.nThreads=4;
     model.opts.nms = 1;   % enable non-maximum suppression
     E = edgesDetect(img, model);
     % 0.1 for 296059, 0.07 for 241004
