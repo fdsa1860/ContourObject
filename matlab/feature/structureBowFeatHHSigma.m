@@ -1,4 +1,4 @@
-function feat = structureBowFeatHHSigma(X, centers, alpha, pts, block)
+function [feat, ind] = structureBowFeatHHSigma(X, centers, alpha, pts, block)
 % Input:
 % X: 1 by N cell, data to be represented
 % centers: 1 by K cell, cluster centers
@@ -22,8 +22,8 @@ for i = 1:nBlocks
     % get distance matrix D: n-by-k matrix
     D = dynamicDistanceSigmaCross(X(isInside), centers, alpha);
     
-%     % hard voting
-%     [val,ind] = min(D, [], 2);
+    % hard voting
+    [val,ind] = min(D, [], 2);
 %     feat( (i-1)*k+1 : i*k ) = hist(ind, 1:k);
 
     % soft voting

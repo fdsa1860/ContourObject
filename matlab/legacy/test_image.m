@@ -4,73 +4,133 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
 % load image
-% img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
+img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
 % img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
 % img = im2double(imread('../inputData/image/241004.jpg'));
-img = im2double(imread('../inputData/image/kids.png'));
+% img = im2double(imread('../inputData/image/kids.png'));
 % img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
+
+imgSize = size(img);
 
 % parameters
 hankel_size = 4;
-alpha = 0;
-hankel_mode = 1;
-nBins = 9;
-
 minLen = 2*hankel_size+2;
 
-%% get cont
-cont = img2cont(img);
+%% contour detection
+% 1 is Canny for synthetic image
+% 2 is Structured edge for natural image (P. Dollar's Method)
+contour = extractContours(img, 2, 1);
 
-%% get map
-numCont = length(cont.seg_line) + length(cont.seg_notLine);
-map(1:numCont) = struct('pts',[0 0], 'label', 0);
+%% rankminimization to reduce the effect of discretization
+Size = imgSize(1:2);
+lambda = 5;
+contour_clean = rankminimize(contour, hankel_size, Size, lambda);
 
-slope = slopeEst(cont.seg_line);
-points_line = cont.points_line;
-block = [1 1 cont.imgSize(2) cont.imgSize(1)];
-[~, ind_line] = structureLineFeat(slope, nBins, points_line, block);
-count = 1;
-for i = 1:length(ind_line)
-    map(count).pts = points_line(i,:);
-    map(count).label = ind_line(i);
-    count = count + 1;
+%% resample
+mode = 1; % fixed length
+fixedLen = 1;
+contour_clean = sampleAlongCurve(contour_clean, mode, fixedLen);
+contour_clean = filterContourWithFixedLength(contour_clean, minLen);
+
+%% Contour trajectories clustering
+
+numCont = numel(contour_clean);
+contourA = cell(1, numCont);         % cumulative angle
+dcontourA = cell(1, numCont);       % the derivative of cumulative angle
+eachLength = zeros(1, numCont);  % the length of each contour trajectory
+
+H = cell(1, numCont);
+HHp = cell(1, numCont);
+order_info = zeros(1, numCont);
+
+for i = 1:numCont
+    eachLength(i) = size(contour_clean{i}, 1);
+    [~, contourA{i}, ~] = cumulativeAngle([contour_clean{i}(:, 2) contour_clean{i}(:, 1)]);
+    dcontourA{i} = diff(contourA{i});
+    [H{i}, HHp{i}] = buildHankel(contourA{i}, hankel_size, 1);
+    
+    % 0.995 for synthetic, 0.98 for 296059 and 241004
+    order_info(i) = getOrder(H{i}, 0.995);
 end
-
-% load centers
-load ../expData/voc_dsca_notLine_centers_w10_a0_h4_20141016;
-
-dscaNotLine = cont.dscA_notLine;
-points_notLine = cont.points_notLine;
-numSeg_notLine = length(dscaNotLine);
-seg(1:numSeg_notLine) = struct('dsca',[], 'H',[], 'HH',[]);
-for i = 1:numSeg_notLine
-    seg(i).dsca = dscaNotLine{i};
-    [seg(i).H, seg(i).HH] = buildHankel(seg(i).dsca, hankel_size, hankel_mode);
-end
-seg = sigmaEst(seg);
-[~, ind_notLine] = structureBowFeatHHSigma(seg, centers, alpha, points_notLine, block);
-for i = 1:length(ind_notLine)
-    map(count).pts = points_notLine(i,:);
-    map(count).label = ind_notLine(i);
-    count = count + 1;
-end
-
-I = zeros(cont.imgSize);
-for i = 1:length(map)
-    x = max(1, floor(map(i).pts(1)));
-    y = max(1, floor(map(i).pts(2)));
-    I(y, x) = map(i).label;
-end
-I
 
 % D = dynamicDistance(HHp, 1:numCont);
 % k = 5;      % number of clusters
-D = dynamicDistanceSigma(HHp, 1:numCont, order_info);
+D = dynamicDistance(HHp, 1:numCont, order_info);
 k = numel(unique(order_info));
 
 label = Ncuts(D, k, order_info);
 plotContoursFromImage(contour_clean, contour, k, label, imgSize, eachLength);
 title(['Number of class: ' num2str(k) ', Feature: cumulative angle'], 'FontSize', 12);
+
+%% Contour segments clustering  Part I
+
+% detect corners on contours
+% by finding the local extremum of the derivative of cumulative angle
+
+% 0.14 for synthetic, 0.085 for 296059 and 241004
+threshold = 0.4;
+corners_index = detectCorners(dcontourA, threshold);
+
+% display corners in image
+hFig = figure;
+set(hFig, 'Position', [200 100 800 600]);
+hold on;
+
+for i = 1:numCont
+    plot(contour_clean{i}(:, 2), contour_clean{i}(:, 1), 'LineWidth', 1.5);
+    plot(contour_clean{i}(1, 2), contour_clean{i}(1, 1), 'bo');  % starting points of contours
+    plot(contour_clean{i}(corners_index{i}, 2), contour_clean{i}(corners_index{i}, 1), ...
+        'r*', 'MarkerSize', 10);
+    
+    %center = sum(contour_clean{i}) / eachLength(i);
+    %text(center(2)-10, center(1)-2, num2str(i), 'FontSize', 13, 'Color', 'b');
+end
+
+hold off;
+axis equal;
+axis ij;
+axis([0 imgSize(2) 0 imgSize(1)]);
+xlabel('x', 'FontSize', 14);
+ylabel('y', 'FontSize', 14);
+title('Corner detection by finding local extreme of the derivative of cumulative angles', ...
+    'FontSize', 12);
+
+% chop contours at corners into segments
+segment = chopContourAtCorner(contour_clean, corners_index);
+% segment_pixel = chopContourAtCorner(contour, corners_index);
+
+[segment, segmentInd] = filterContourWithFixedLength(segment, minLen);
+% segment_pixel = segment_pixel(segmentInd);
+segment_pixel = [];
+
+numSeg = numel(segment);
+
+% display the contour segments chopped at corners
+hFig = figure;
+set(hFig, 'Position', [200 100 800 600]);
+hold on;
+
+for i = 1:numSeg
+    plot(segment{i}(:, 2), segment{i}(:, 1), 'LineWidth', 1.5);
+    text(segment{i}(1, 2), segment{i}(1, 1), [' ' num2str(i)]);
+end
+
+hold off;
+axis equal;
+axis ij;
+axis([0 imgSize(2) 0 imgSize(1)]);
+xlabel('x', 'FontSize', 14);
+ylabel('y', 'FontSize', 14);
+title('Contour Segments chopped at corners', 'FontSize', 12);
+
+%% hstln denoise
+seg2 = cell(1, numSeg);
+eta_thr = 0.6;
+for i = 1:numSeg
+    [seg_tmp,~,~,R] = fast_incremental_hstln_mo(segment{i}',eta_thr);
+    seg2{i} = seg_tmp';
+end
+segment = seg2;
 
 %%
 MEAN_THRES = 0.005;
