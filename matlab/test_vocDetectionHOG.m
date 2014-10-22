@@ -19,7 +19,7 @@ for i=1:VOCopts.nclasses
 %     save(sprintf('voc_detector_%s_20141016', cls), 'detector');
 %     load(sprintf('../expData/voc_detector_%s_20141016', cls), 'detector');
     vocDetectTestHOG(VOCopts, cls, detector);         % test detector
-    [recall,prec,ap]=VOCevaldet(VOCopts,'comp4',cls,true);  % compute and display PR
+    [recall,prec,ap]=VOCevaldet(VOCopts,'comp3hog',cls,true);  % compute and display PR
     
     if i<VOCopts.nclasses
         fprintf('press any key to continue with next class...\n');

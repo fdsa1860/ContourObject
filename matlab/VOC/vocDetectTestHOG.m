@@ -12,7 +12,7 @@ opts.beta  = .75;     % nms threshold for object proposals
 opts.minScore = .01;  % min score of boxes to detect
 opts.maxBoxes = 1e4;  % max number of boxes to detect
 % create results file
-fid=fopen(sprintf(VOCopts.detrespath,'comp3',cls),'w');
+fid=fopen(sprintf(VOCopts.detrespath,'comp3hog',cls),'w');
 
 % apply detector to each image
 tic;

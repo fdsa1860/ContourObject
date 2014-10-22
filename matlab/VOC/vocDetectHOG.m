@@ -3,12 +3,13 @@ function [c,BB]=vocDetectHOG(VOCopts, detector, I, bbs)
 maxNum = 1000;
 n = min(maxNum, size(bbs, 1));
 bbs = bbs(1:n, :);
+bbs = [bbs(:,1) bbs(:,2) bbs(:,1)+bbs(:,3) bbs(:,2)+bbs(:,4) bbs(:,5)];
 
 numROI = size(bbs, 1);
 feat = zeros(128/8 * (64/8) * 4*9, numROI);
 for i = 1:numROI
     bb = bbs(i, 1:4);
-    roi = I(bb(2):bb(2)+bb(4), bb(1):bb(1)+bb(3), :);
+    roi = I(bb(2):bb(4), bb(1):bb(3), :);
     try
     roiScale = imresize(roi, [128, 64]);
     catch me
