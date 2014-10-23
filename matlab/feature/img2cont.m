@@ -10,7 +10,7 @@ imgSize = [size(img,1) size(img,2)];
 % 1 is Canny for synthetic image
 % 2 is Structured edge for natural image (P. Dollar's Method)
 contour = extractContours(img, 2, draw);
-if isempty(contour), return; end
+if isempty(contour), cont=[]; return; end
 
 % rankminimization to reduce the effect of discretization
 hankel_size = 4;
@@ -67,7 +67,7 @@ hankel_size = 4;
 if ~isempty(segment), segment = segment(dscA_ind); end
 
 % segment with sliding window
-if isempty(dscA) || isempty(segment), return; end
+if isempty(dscA) || isempty(segment), cont=[]; return; end
 [dscA, segment, points] = slideWindowChopContour(dscA, segment, 2*hankel_size);
 % line detection
 isLine = dscaLineDetect(dscA);

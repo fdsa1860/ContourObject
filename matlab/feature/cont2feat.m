@@ -1,6 +1,6 @@
 function [feat, cont] = cont2feat(cont, centers, bbox)
 
-if isempty(centers)
+if isempty(centers) || isempty(cont)
     feat = [];
     return;
 end

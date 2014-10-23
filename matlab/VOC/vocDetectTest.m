@@ -25,21 +25,21 @@ for i=1:length(ids)
         tic;
     end
     
-    try
-        % try to load features
-        load(sprintf(VOCopts.exfdpath,ids{i}),'cont');
-    catch
-        % compute and save features
-        I=imread(sprintf(VOCopts.imgpath,ids{i}));
-%         fd=extractfd(VOCopts,I);
-        cont = img2cont(I,0);
-        save(sprintf(VOCopts.exfdpath,ids{i}),'cont');
-    end
+%     try
+%         % try to load features
+%         load(sprintf(VOCopts.exfdpath,ids{i}),'cont');
+%     catch
+%         % compute and save features
+%         I=imread(sprintf(VOCopts.imgpath,ids{i}));
+% %         fd=extractfd(VOCopts,I);
+%         cont = img2cont(I,0);
+%         save(sprintf(VOCopts.exfdpath,ids{i}),'cont');
+%     end
 
     I=imread(sprintf(VOCopts.imgpath,ids{i}));
     bbs = edgeBoxes( I, model, opts );
     % compute confidence of positive classification and bounding boxes
-    [c,BB]=vocDetect(VOCopts,detector,cont,centers, bbs);
+    [c,BB]=vocDetect(VOCopts,detector,[],centers, bbs, I);
 
     % write to results file
     for j=1:length(c)

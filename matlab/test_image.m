@@ -51,17 +51,21 @@ seg = sigmaEst(seg);
 [~, ind_notLine] = structureBowFeatHHSigma(seg, centers, alpha, points_notLine, block);
 for i = 1:length(ind_notLine)
     map(count).pts = points_notLine(i,:);
-    map(count).label = ind_notLine(i);
+    map(count).label = ind_notLine(i)+nBins;
     count = count + 1;
 end
 
-I = zeros(cont.imgSize);
+%% show image
+color = hsv(19);
+I = zeros([cont.imgSize,3]);
 for i = 1:length(map)
     x = max(1, floor(map(i).pts(1)));
     y = max(1, floor(map(i).pts(2)));
-    I(y, x) = map(i).label;
+    I(y, x, :) = color(map(i).label, :);
 end
-I
+imshow(I);
+hbar = colorbar;
+set(hbar, 'YTickLabel', [1:19]);
 
 % D = dynamicDistance(HHp, 1:numCont);
 % k = 5;      % number of clusters
