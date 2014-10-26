@@ -22,7 +22,7 @@ for i = 1:numImg
 end
 
 if verbose
-    fprintf('finished!\n');
+    fprintf('finish!\n');
 end
 
 end

@@ -13,7 +13,7 @@ VOCinit;
 for i=1:VOCopts.nclasses
 % for i=2
     cls=VOCopts.classes{i};
-    load ../expData/voc_dsca_notLine_centers_w10_a0_h4_20141016;
+    load ../expData/voc_dsca_notLine_centers_w10_a0_h4_sig001_20141023;
 %     detector = [];
     detector = vocDetectTrain(VOCopts, cls, centers);       % train detector
 %     save(sprintf('voc_detector_%s_20141016', cls), 'detector');

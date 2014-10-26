@@ -1,4 +1,4 @@
-function [centers, label, D] = nCutContourHHSigma(X, k, alpha, D)
+function [centers, label, D] = nCutContourHHSigma(X, k, alpha, D, scale_sig, order)
 % nCutContourHHSigma: cluster data using hankelet metric and normalized
 % sigular values
 %
@@ -21,7 +21,7 @@ if nargin < 3
     alpha = 0;
 end
 
-if nargin < 4
+if nargin < 4 || isempty(D)
     D = dynamicDistanceSigma(X, alpha);
 end
 
@@ -32,9 +32,20 @@ centers(1:k) = struct('centerInd',  0,  ...
                         'HH',       [],    ...
                         'beta',     0);
 
-W = exp(-D);     % the similarity matrix
+if (~exist('scale_sig','var'))
+    scale_sig = 0.001*max(D(:));
+end
+
+if (~exist('order','var'))
+  order = 2;
+end
+
+tmp = (D/scale_sig).^order;
+W = exp(-tmp);     % the similarity matrix
 NcutDiscrete = ncutW(W, k);
 label = sortLabel_count(NcutDiscrete);
+% update k, sometimes the cluster # is not exactly k
+k = length(unique(label));
 
 % ncut again on the first cluster
 % D1 = D(label==1, label==1);
@@ -45,6 +56,7 @@ label = sortLabel_count(NcutDiscrete);
 % label = sortLabel(label);
 
 centerInd = findCenters(D, label);
+
 
 % estimate beta, which is the parameter for the estimated pdf of each
 % cluster, the pdf function is f(x) = beta * exp(- beta * x)

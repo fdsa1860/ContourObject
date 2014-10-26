@@ -58,11 +58,11 @@ dscANotLinePool = pooling(dscA_notLine_all_data, poolMaxSize);
 nc = 10;
 % load ../expData/ped_dscA_notLine_sD_a0_20141012
 % tic;
-% [centers, sLabel, sD] = nCutContourHHSigma(dscANotLinePool(1:10000), nc, alpha);
+% [centers, sLabel, sD] = nCutContourHHSigma(dscANotLinePool(1:10000), nc, alpha, sD);
 % toc
 % save ped_dscA_notLine_sD_a0_20141012 sD;
-% save ped_dscA_notLine_centers_w10_a0_h4_20141012 centers sLabel;
-load ../expData/ped_dscA_notLine_centers_w10_a0_h4_20141012
+% save ped_dscA_notLine_centers_w10_a0_h4_sig001_20141023 centers sLabel;
+load ../expData/ped_dscA_notLine_centers_w10_a0_h4_sig001_20141023
 
 %% estimate line slope
 slope_all = slopeEstAll(seg_line_all);

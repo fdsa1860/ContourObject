@@ -1,7 +1,7 @@
 % train classifier
 function [classifier, dscaNotLineAll] = vocClsfTrain(VOCopts, cls, centers)
 
-if nargin < 3
+if ~exist('centers','var')
     centers = [];
 end
 

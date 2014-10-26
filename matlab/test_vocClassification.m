@@ -12,11 +12,10 @@ VOCinit;
 % train and test classifier for each class
 for i=1:VOCopts.nclasses
     cls=VOCopts.classes{i};
-    load ../expData/voc_dsca_notLine_centers_w10_a0_h4_20141016;
-    [classifier, dscaNotLineAll] = vocClsfTrain(VOCopts,cls,centers); % train classifier
+%     load ../expData/voc_dsca_notLine_centers_w10_a0_h4_20141016;
+    [classifier, dscaNotLineAll] = vocClsfTrain(VOCopts,cls); % train classifier
     
-%     [centers, sLabel, sD] = vocClsfCluster(dscaNotLineAll);
-%     save voc_dsca_notLine_centers_w10_a0_h4_20141016;
+    [centers, sLabel, sD] = vocClsfCluster(dscaNotLineAll);
 
     vocClsfTest(VOCopts, cls, classifier, centers); % test classifier
     [recall,prec,ap]=VOCevalcls(VOCopts,'comp1',cls,true);   % compute and display PR
