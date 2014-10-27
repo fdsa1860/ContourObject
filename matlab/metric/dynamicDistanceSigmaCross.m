@@ -11,7 +11,9 @@ D = zeros(m, n);
 for i = 1:m
     for j = 1:n
         if isempty(X(i).sigma) || isempty(centers(j).sigma)
+            try
             D(i, j) = abs(2 - norm(X(i).HH + centers(j).HH, 'fro'));
+            catch me, keyboard; end
         elseif all(X(i).sigma == 0) || all(centers(j).sigma == 0)
             D(i, j) = 0;
         else

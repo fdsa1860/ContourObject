@@ -26,11 +26,11 @@ if nargin == 2
             [predict_label, ~, prob_estimates] = svmpredict(y_test', sparse(X_test'), model);
             accuracy = nnz(predict_label==y_test')/length(y_test);
             libsvmModel = model;
-            fprintf('\naccuracy is %f\n',mean(accuracy));
             accuracyMat(ci) = mean(accuracy);
         end
         accuracyCross(k) = accuracy;
     end
+    fprintf('\naccuracy is %f\n',mean(accuracyCross));
     
 elseif nargin == 4    
     X_train = feat1;

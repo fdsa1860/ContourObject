@@ -7,6 +7,8 @@
 
 function [H, HHp] = buildHankel(data, h_size, mode)
 
+if isempty(data), H=[]; HHp=[]; return; end
+    
 dim = size(data, 2);
 if mode == 1
     if dim == 1
