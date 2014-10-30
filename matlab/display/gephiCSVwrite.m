@@ -27,6 +27,7 @@ switch nargin
         for i = 1:num_node-1
             fprintf(fidnode,'%d;%d;%d;\n',i,i,label(i));
             for j = i+1:num_node
+                if AffMat(i,j)==0, continue; end
                 fprintf(fidedge,'%d;%d;%s;%1.2f;\n',i,j,'Undirected',AffMat(i,j));
             end
         end
