@@ -4,3 +4,4 @@ expData/
 3rdParty/contourCut/
 .DS_Store
 *.asv
+*.csv
