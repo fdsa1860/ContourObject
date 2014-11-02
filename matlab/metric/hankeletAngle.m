@@ -5,7 +5,7 @@ function y = hankeletAngle(seg1,seg2,thr)
 D = size(seg1,2);
 assert(size(seg2,2)==D);
 
-nr = 16;
+nr = 4;
 % nc = 4;
 
 % % take out mean

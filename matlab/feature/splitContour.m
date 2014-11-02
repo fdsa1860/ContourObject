@@ -1,5 +1,6 @@
 function [splitedContour, contour] = splitContour(contour, opt)
 
+splitedContour = [];
 for i = 1:length(contour)
     dsca = {contour(i).dsca};
     cont = {contour(i).points};
