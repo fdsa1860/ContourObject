@@ -17,11 +17,11 @@ negDir = sprintf('../../../data/INRIAPerson/%s/neg/', opt);
 [imgList, labels] = loadImgList(posDir, negDir);
 
 %% compute contours, then features
-% tic
-% [dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, false, true);
-% toc
-% save(sprintf('dscaSeg_%s_20141005', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
-load(sprintf('../expData/dscASeg_%s_20141012', opt));
+tic
+[dscA_all, seg_all, imgSize_all] = img2dscaAll(imgList, opt, false, true);
+toc
+% save(sprintf('dscaSeg_%s_20141028', opt), 'dscA_all', 'seg_all', 'imgSize_all', 'labels');
+% load(sprintf('../expData/dscASeg_%s_20141012', opt));
 
 %% filter the short curves
 [dscA_all, seg_all, dscA_ind] = filterWithFixedLengthAll(dscA_all, seg_all, 2*hankel_size);
@@ -56,14 +56,14 @@ dscANotLinePool = pooling(dscA_notLine_all_data, poolMaxSize);
 
 %% computer cluster centers
 nc = 10;
-% load ../expData/ped_dscA_notLine_sD_a0_20141012
+% load ../expData/ped_dscA_notLine_sD_a0_notClean_20141028
 % tic;
-% [centers, sLabel, sD] = nCutContourHHSigma(dscANotLinePool(1:10000), nc, alpha, sD);
+% [centers, sLabel, sD] = nCutContourHHSigma(dscANotLinePool(1:10000), nc, alpha);
 % toc
-% save ped_dscA_notLine_sD_a0_20141012 sD;
+% save ped_dscA_notLine_sD_a0_notClean_20141028 sD;
 % save ped_dscA_notLine_centers_w10_a0_h4_sig001_20141023 centers sLabel;
-load ../expData/ped_dscA_notLine_centers_w10_a0_h4_sig001_20141023
-centers(10) = [];
+load ../expData/ped_dscA_notLine_notClean_centers_w10_a0_h4_sig001_20141028
+% centers(10) = [];
 
 %% estimate line slope
 slope_all = slopeEstAll(seg_line_all);

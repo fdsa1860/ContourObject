@@ -13,17 +13,21 @@ if nargin < 3
     draw = false;
 end
 
+persistent model;
+
 % choose the method of edge detection
 if method == 1         % Canny
     img_bw = im2bw(img, 0.8);
     BW = im2double(edge(img_bw, 'canny'));    
 elseif method == 2    % Structure edge
 %     load('structured edge detector/models/forest/modelFinal.mat');
-    model=load('models/forest/modelBsds'); model=model.model;
-    model.opts.multiscale=0; model.opts.sharpen=2; model.opts.nThreads=4;
-    model.opts.nms = 1;   % enable non-maximum suppression
+    if isempty(model)
+        model=load('models/forest/modelBsds');
+        model=model.model;
+        model.opts.multiscale=0; model.opts.sharpen=2; model.opts.nThreads=4;
+        model.opts.nms = 1;   % enable non-maximum suppression
+    end
     E = edgesDetect(img, model);
-    % 0.1 for 296059, 0.07 for 241004
     BW = im2double(im2bw(E, 0.1));
 end
 
@@ -31,8 +35,8 @@ if draw
     figure, imshow(E);
     figure, imshow(BW);
 end
-contour = extractContBW(BW);
-% contour2 = extractContBW2(BW, E);
+% contour = extractContBW(BW);
+contour = extractContBW2(BW, E);
 
 if draw
     showContours(contour, length(contour), 1:length(contour));

@@ -5,9 +5,9 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
 %% load image
-imFile = '../inputData/image/kids.png';
-% I = im2double(imread('../inputData/image/kids.png'));
-% img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
+%% load data
+inputDir = sprintf('~/research/data/caltech101/%s/pos/', opt);
+[imgList, labels] = loadImgList(posDir, negDir);
 
 % parameters
 opt.hankel_size = 4;

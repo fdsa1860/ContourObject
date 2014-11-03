@@ -12,8 +12,8 @@ hankel_size = opt.hankel_size;
 alpha = opt.alpha;
 centers = img.centers;
 
-% contour = img2contour(I, opt.draw);
-[splitedContour, contour] = splitContour(img.cont, opt);
+contour = img2contour(I, opt.draw);
+[splitedContour, contour] = splitContour(contour, opt);
 
 img.cont = contour;
 

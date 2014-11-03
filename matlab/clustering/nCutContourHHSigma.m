@@ -25,13 +25,6 @@ if nargin < 4 || isempty(D)
     D = dynamicDistanceSigma(X, alpha);
 end
 
-centers(1:k) = struct('centerInd',  0,  ...
-                        'data',     [], ...
-                        'sigma',    [], ...
-                        'H',        [], ...
-                        'HH',       [],    ...
-                        'beta',     0);
-
 if (~exist('scale_sig','var'))
     scale_sig = 0.001*max(D(:));
 end
@@ -69,13 +62,9 @@ for i = 1:k
     beta(i) = 1 / (sum(p .* t * delta_t) + 1e-6);
 end
 
+centers = X(centerInd);
 for i = 1:k
-    ind = centerInd(i);
-    centers(i).centerInd = ind;
-    centers(i).data = X(ind).dsca;
-    centers(i).sigma = X(ind).sigma;
-    centers(i).H = X(ind).H;
-    centers(i).HH = X(ind).HH;
+    centers(i).centerInd = centerInd(i);
     centers(i).beta = beta(i);
 end
 

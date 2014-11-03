@@ -16,6 +16,7 @@ if isempty(contour), cont=[]; return; end
 hankel_size = 4;
 lambda = 5;
 contour_clean = rankminimize(contour, hankel_size, imgSize, lambda);
+% contour_clean = contour;
 
 % resample
 mode = 1; % fixed length
@@ -45,6 +46,7 @@ segment = chopContourAtCorner(contour_clean, corners_index);
 [segment, segmentInd] = filterContourWithFixedLength(segment, 2*hankel_size);
 
 numSeg = numel(segment);
+
 % hstln denoise
 seg2 = cell(1, numSeg);
 eta_thr = 0.3;
@@ -59,6 +61,7 @@ dscA = cell(1, numSeg); % the derivative of cumulative angle for segments
 for i = 1:numSeg
     [~, scA{i}, ~] = cumulativeAngle([segment{i}(:, 2) segment{i}(:, 1)]);
     dscA{i} = diff(scA{i});
+%     dscA{i} = conv(scA{i}, [-1 0 0 0 1], 'valid');
 end
 
 % filter length
