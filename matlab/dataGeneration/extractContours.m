@@ -36,7 +36,8 @@ if draw
     figure, imshow(BW);
 end
 % contour = extractContBW(BW);
-contour = extractContBW2(BW, E);
+% contour = extractContBW2(BW, E);
+contour = extractContBW_fast(BW, E);
 
 if draw
     showContours(contour, length(contour), 1:length(contour));

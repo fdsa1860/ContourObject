@@ -156,7 +156,7 @@ for i = 1:length(contourz_all)
         contour(k:k+nMerged-1) = mergedSeg;
         k = k + nMerged;
     elseif any(isEndPt)
-        contour{k} = contourz(1:size(contourz,1)/2, :);
+        contour{k} = contourz(1:round(size(contourz,1)/2), :);
         k = k + 1;
     else
         contour{k} = contourz;
