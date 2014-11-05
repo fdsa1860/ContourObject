@@ -16,6 +16,7 @@ for i = 1:numImg
         I_raw = im2double(imread(imgList{i}));
         I = I_raw(margin+1:end-margin, margin+1:end-margin, :);
         contour = img2contour_fast(I);
+        img = [];
         img.opt = opt;
         img.width = size(I, 2);
         img.height = size(I, 1);
@@ -23,7 +24,9 @@ for i = 1:numImg
         img = imgAddSeg(img);
         img = imgAddHH(img);
         img = imgAddSigma(img);
-        img.locs = cat(1,img.seg.loc);
+        if ~isempty(img.seg)
+            img.locs = cat(1,img.seg.loc);
+        end
         img.label = labels(i);
         save(sprintf(opt.localDir, opt.dataset, i), 'img');
     end

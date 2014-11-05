@@ -15,6 +15,11 @@ end
 k = length(centers);
 nBlocks = size(block, 1);
 feat = zeros(nBlocks * k, 1);
+ind = [];
+
+if isempty(pts) || isempty(X)
+    return;
+end
 
 for i = 1:nBlocks
     isInside = pts(:, 1)>=block(i, 1) & pts(:, 1)<=block(i, 3) & ...

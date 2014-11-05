@@ -75,11 +75,12 @@ contourz_all(len < 5) = [];
 k=1;
 for i = 1:length(contourz_all)
     contourz = contourz_all{i};
-    isEndPt = ismember(contourz, endpoint, 'rows');
+    isEndPt = mexIsMember(contourz, endpoint);
     if ~any(isEndPt)
         contourz_half=contourz;
     else
-        contourz_half=contourz(1:floor(length(contourz)/2),:);
+        ind = find(isEndPt);
+        contourz_half=contourz(ind(1):ind(2),:);
     end
     contour{k}=contourz_half;
     k=k+1;
