@@ -24,9 +24,6 @@ for i = 1:numImg
         img = imgAddSeg(img);
         img = imgAddHH(img);
         img = imgAddSigma(img);
-        if ~isempty(img.seg)
-            img.locs = cat(1,img.seg.loc);
-        end
         img.label = labels(i);
         save(sprintf(opt.localDir, opt.dataset, i), 'img');
     end

@@ -1,4 +1,4 @@
-function [feat, ind] = structureBowFeatHHSigma(X, centers, alpha, pts, block)
+function [feat, ind] = structureBowFeatHHSigma(X, centers, alpha, block)
 % Input:
 % X: 1 by N cell, data to be represented
 % centers: 1 by K cell, cluster centers
@@ -17,13 +17,15 @@ nBlocks = size(block, 1);
 feat = zeros(nBlocks * k, 1);
 ind = [];
 
-if isempty(pts) || isempty(X)
+if isempty(X),
     return;
 end
 
+locs = cat(1, X.loc);
+
 for i = 1:nBlocks
-    isInside = pts(:, 1)>=block(i, 1) & pts(:, 1)<=block(i, 3) & ...
-        pts(:, 2)>=block(i, 2) & pts(:, 2)<=block(i, 4);
+    isInside = locs(:, 1)>=block(i, 1) & locs(:, 1)<=block(i, 3) & ...
+        locs(:, 2)>=block(i, 2) & locs(:, 2)<=block(i, 4);
     % get distance matrix D: n-by-k matrix
     D = dynamicDistanceSigmaCross(X(isInside), centers, alpha);
     
