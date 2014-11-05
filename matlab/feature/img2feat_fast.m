@@ -26,6 +26,6 @@ img = imgAddSigma(img);
 img.locs = cat(1,img.seg.loc);
 
 block = genBlock([1 1 img.width img.height], nBins, nBins);
-[feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, img.locs, block);
+[feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, block);
 
 end
