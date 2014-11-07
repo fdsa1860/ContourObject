@@ -13,7 +13,7 @@ opt.nBins = 9;
 opt.minLen = 2 * opt.hankel_size + 2;
 opt.draw = false;
 opt.verbose = true;
-opt.localDir = '/Users/xikangzhang/research/code/ContourObject/expData/ped_contour/contour_%s_%05d';
+opt.localDir = '/Users/xikangzhang/research/code/ContourObject/expData/ped_contour_fast_noSample/contour_%s_%05d';
 
 opt.dataset = 'mytrain';
 % opt = 'mytest';
@@ -46,22 +46,22 @@ end
 nc = 100;
 % load ../expData/ped_sD_a0_notClean_20141030;
 % tic;
-% [centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD);
+% [centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha);
 % toc
-% save ped_sD_a0_notClean_20141030 sD;
-% save ped_centers_w100_a0_sig001_20141030 centers sLabel;
-load ../expData/ped_centers_w100_a0_sig001_20141030
+% save ped_sD_a0_notClean_20141104 sD;
+% save ped_centers_w100_a0_sig001_20141104 centers sLabel;
+load ../expData/ped_centers_w100_a0_sig001_20141104
 
 % load centers
 % load ../expData/voc_dsca_notLine_centers_w10_a0_h4_20141016;
 % img.centers = centers;
-centers = centers(1:50);
+% centers = centers(1:50);
 
 %% get feature
-ind = zeros(64, 1);
-for i = 1:64
-    ind(i) = 50*(i-1)+1;
-end
+% ind = zeros(64, 1);
+% for i = 1:64
+%     ind(i) = 50*(i-1)+1;
+% end
 tic
 % profile on;
 numImg = length(img_all);
@@ -69,8 +69,8 @@ for i = 1:numImg
 % for i = 1:1
     img = img_all{i};
     block = genBlock([1 1 img.width img.height], 4, 16);
-    [feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, img.locs, block);
-    feat(ind,:) = 0;
+    [feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, block);
+%     feat(ind,:) = 0;
     img.feat = [];
     img.feat = feat;
     img_all{i} = img;
@@ -83,7 +83,7 @@ toc
 
 %% classify
 numImg = length(img_all);
-X_train = zeros(50*64, numImg);
+X_train = zeros(100*64, numImg);
 for i = 1:numImg
     X_train(:,i) = img_all{i}.feat;
     y_train(i) = img_all{i}.label;
