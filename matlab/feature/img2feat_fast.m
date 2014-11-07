@@ -22,7 +22,7 @@ img.height = size(I, 1);
 img.contour = contour;
 img = imgAddSeg(img);
 img = imgAddHH(img);
-img = imgAddSigma(img);
+% img = imgAddSigma(img);
 
 block = genBlock([1 1 img.width img.height], nBins, nBins);
 [feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, block);
