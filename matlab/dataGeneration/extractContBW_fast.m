@@ -75,6 +75,7 @@ contourz_all(len < 5) = [];
 k=1;
 for i = 1:length(contourz_all)
     contourz = contourz_all{i};
+    % isEndPt = ismember(contourz, endpoint);
     isEndPt = mexIsMember(contourz, endpoint);
     if ~any(isEndPt)
         contourz_half=contourz;

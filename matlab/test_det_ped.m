@@ -4,6 +4,7 @@
 clc;clear;close all;
 addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
+addpath(genpath('../mex'));
 
 % parameters
 opt.hankel_size = 4;
@@ -13,7 +14,7 @@ opt.nBins = 9;
 opt.minLen = 2 * opt.hankel_size + 2;
 opt.draw = false;
 opt.verbose = true;
-opt.localDir = '/Users/xikangzhang/research/code/ContourObject/expData/ped_contour_fast_noSample/contour_%s_%05d';
+opt.localDir = '/Users/xikangzhang/research/code/ContourObject/expData/ped_contour_fast/contour_%s_%05d';
 
 opt.dataset = 'mytrain';
 % opt = 'mytest';

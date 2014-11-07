@@ -12,7 +12,9 @@ for i = 1:n
     points = contour{i};
     contour_new(i).points = points;
     contour_new(i).vel = conv2(points, h, 'valid');
+%     contour_new(i).seg = contour2seg(points, winSize);
     contour_new(i).seg = mexContour2Seg(points, winSize);
+
 end
 
 end
