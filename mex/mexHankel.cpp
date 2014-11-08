@@ -8,6 +8,7 @@
 
 #include "mex.h"
 #include "matrix.h"
+#include <cmath>
 
 mxArray *process(const mxArray *mx_X)
 {
@@ -19,7 +20,7 @@ mxArray *process(const mxArray *mx_X)
     
     m = mxGetM(mx_X);
     n = mxGetN(mx_X);
-    nr = (n+1)/3+1;
+    nr = ceil(n/3.0);
     nc = n-nr+1;
     mx_H = mxCreateDoubleMatrix(2*nr, nc, mxREAL);
     
