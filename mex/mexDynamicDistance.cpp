@@ -40,6 +40,9 @@ mxArray *process(const mxArray *mx_X, const mxArray *mx_center)
             mwSize X_cols = mxGetN(mx_X_HH);
             mwSize center_rows = mxGetM(mx_center_HH);
             mwSize center_cols = mxGetN(mx_center_HH);
+            
+            if (X_rows!=center_rows || X_cols!=center_cols)
+                mexErrMsgTxt("The size of the input hankel matrices are not the same!");
 
             ind = j*nStruct_X+i;
             for (mwSize k=0;k<X_rows*X_cols;++k)
