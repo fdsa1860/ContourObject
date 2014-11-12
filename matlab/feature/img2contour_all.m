@@ -4,6 +4,8 @@ if strcmp(opt.dataset, 'mytrain')
     margin = 16;
 elseif strcmp(opt.dataset, 'mytest')
     margin = 3;
+elseif strcmp(opt.dataset, 'caltech101')
+    margin = 0;
 end
 
 numImg = length(imgList);
@@ -15,6 +17,10 @@ for i = 1:numImg
     catch
         I_raw = im2double(imread(imgList{i}));
         I = I_raw(margin+1:end-margin, margin+1:end-margin, :);
+        if ndims(I) == 2
+            I(:,:,2) = I;
+            I(:,:,3) = I(:,:,2);
+        end
         contour = img2contour_fast(I);
         img = [];
         img.opt = opt;
