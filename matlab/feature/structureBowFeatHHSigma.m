@@ -18,6 +18,7 @@ bbox = cells.bbox;
 nc = cells.nc;
 nr = cells.nr;
 dim = 4*(nr-1)*(nc-1)*k;
+
 feat = zeros(dim, 1);
 ind = [];
 

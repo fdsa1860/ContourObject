@@ -4,11 +4,11 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 
 % load image
-% img = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
-% img = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
-% img = im2double(imread('../inputData/image/241004.jpg'));
+% I = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image
+% I = im2double(imread('../inputData/image/296059.jpg'));  % natural image from BSDS500
+% I = im2double(imread('../inputData/image/241004.jpg'));
 I = im2double(imread('../inputData/image/kids.png'));
-% img = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
+% I = im2double(imread('../../../data/INRIAPerson/mytrain/pos/crop_000010a.png'));
 
 % parameters
 hankel_size = 4;
@@ -20,8 +20,8 @@ minLen = 2*hankel_size+2;
 tic
 profile on;
 %% get cont
-% cont = img2cont(img);
-contour = img2contour_fast(I);
+cont = img2cont(I);
+% contour = img2contour_fast(I);
 
 %% get map
 numCont = length(cont.seg_line) + length(cont.seg_notLine);
@@ -29,8 +29,11 @@ map(1:numCont) = struct('pts',[0 0], 'label', 0);
 
 slope = slopeEst(cont.seg_line);
 points_line = cont.points_line;
-block = [1 1 cont.imgSize(2) cont.imgSize(1)];
-[~, ind_line] = structureLineFeat(slope, nBins, points_line, block);
+cells.bbox = [1 1 cont.imgSize(2) cont.imgSize(1)];
+cells.num = 1;
+cells.nr = 8;
+cells.nc = 8;
+[~, ind_line] = structureLineFeat(slope, nBins, points_line, cells);
 count = 1;
 for i = 1:length(ind_line)
     map(count).pts = points_line(i,:);
@@ -50,7 +53,8 @@ for i = 1:numSeg_notLine
     [seg(i).H, seg(i).HH] = buildHankel(seg(i).dsca, hankel_size, hankel_mode);
 end
 seg = sigmaEst(seg);
-[~, ind_notLine] = structureBowFeatHHSigma(seg, centers, alpha, points_notLine, block);
+seg = addPoints(seg, points_notLine);
+[~, ind_notLine] = structureBowFeatHHSigma(seg, centers, alpha, cells);
 for i = 1:length(ind_notLine)
     map(count).pts = points_notLine(i,:);
     map(count).label = ind_notLine(i)+nBins;
