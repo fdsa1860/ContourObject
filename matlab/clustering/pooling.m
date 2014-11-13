@@ -7,7 +7,7 @@ end
 rng('default');
 nX = length(X_all);
 ri = randperm(nX);
-Y(1:poolMaxSize) = struct('dsca',[], 'H', [], 'HH',[], 'sigma',[]);
+Y(1:poolMaxSize) = struct('dsca',[], 'H', [], 'HH',[], 'sigma',[],'loc',[]);
 counter = 0;
 for i = 1:nX
     X = X_all{ri(i)};

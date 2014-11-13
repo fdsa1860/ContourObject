@@ -1,4 +1,4 @@
-function feat = structureBowFeatHHSigmaAll(X_all, centers, alpha, points_notLine_all, block_all, verbose)
+function feat = structureBowFeatHHSigmaAll(X_all, centers, alpha, cells_all, verbose)
 
 if nargin < 6
     verbose = false;
@@ -8,15 +8,17 @@ if verbose
     fprintf('getting BOW representation ...');
 end
 
-nc = length(centers);
+k = length(centers);
 numImg = length(X_all);
-nBlocks = size(block_all{1}, 1);
-feat = zeros(nc * nBlocks, numImg);
+% nBlocks = cells_all{1}.num;
+% featSize = nBlocks * k;
+featSize = 4 * (cells_all{1}.nr-1) * (cells_all{1}.nc-1) * k;
+feat = zeros(featSize, numImg);
 for i = 1:numImg
     if isempty(X_all{i})
         continue;
     end
-    feat(:,i) = structureBowFeatHHSigma(X_all{i}, centers, alpha, points_notLine_all{i}, block_all{i});
+    feat(:,i) = structureBowFeatHHSigma(X_all{i}, centers, alpha, cells_all{i});
 end
 
 if verbose
