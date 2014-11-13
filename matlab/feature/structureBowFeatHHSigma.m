@@ -1,4 +1,4 @@
-function [feat, ind] = structureBowFeatHHSigma(X, centers, alpha, block)
+function [feat, ind] = structureBowFeatHHSigma(X, centers, alpha, cells)
 % Input:
 % X: 1 by N cell, data to be represented
 % centers: 1 by K cell, cluster centers
@@ -13,8 +13,12 @@ if nargin < 5
 end
 
 k = length(centers);
-nBlocks = size(block, 1);
-feat = zeros(nBlocks * k, 1);
+nCells = cells.num;
+bbox = cells.bbox;
+nc = cells.nc;
+nr = cells.nr;
+dim = 4*(nr-1)*(nc-1)*k;
+feat = zeros(dim, 1);
 ind = [];
 
 if isempty(X),
@@ -23,19 +27,26 @@ end
 
 locs = cat(1, X.loc);
 
-for i = 1:nBlocks
-    isInside = locs(:, 1)>=block(i, 1) & locs(:, 1)<=block(i, 3) & ...
-        locs(:, 2)>=block(i, 2) & locs(:, 2)<=block(i, 4);
-    % get distance matrix D: n-by-k matrix
-    D = dynamicDistanceSigmaCross(X(isInside), centers, alpha);
-    
+D2 = dynamicDistanceSigmaCross(X, centers, alpha);
+isInside2 = bsxfun(@ge, locs(:,1), bbox(:,1)') & ...
+    bsxfun(@le, locs(:,1), bbox(:,3)') & ...
+    bsxfun(@ge, locs(:,2), bbox(:,2)') & ...
+    bsxfun(@le, locs(:,2), bbox(:,4)');
+
+feat_cell = zeros(nr, nc, k);
+for q = 1:nCells
+    isInside = isInside2(:,q);
+    D = D2(isInside,:);
     % hard voting
     [val,ind] = min(D, [], 2);
 %     feat( (i-1)*k+1 : i*k ) = hist(ind, 1:k);
-
+    
     % soft voting
     W = exp(-10*D);
-    feat( (i-1)*k+1 : i*k ) = sum(W, 1);
+%     feat( (i-1)*k+1 : i*k ) = sum(W, 1);
+    i = ceil((q-0.5)/nc);
+    j = mod(q-1,nc)+1;
+    feat_cell(i,j,:) = sum(W, 1);
     
 %     % probability voting
 %     W = zeros(size(D));
@@ -45,5 +56,8 @@ for i = 1:nBlocks
 %     feat( (i-1)*k+1 : i*k ) = sum(W);
 
 end
+
+feat_block = blockNormalization(feat_cell);
+feat = feat_block(:);
 
 end

@@ -69,7 +69,7 @@ numImg = length(img_all);
 for i = 1:numImg
 % for i = 1:1
     img = img_all{i};
-    block = genBlock([1 1 img.width img.height], 4, 16);
+    c = genCells([1 1 img.width img.height], 4, 16);
     [feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, block);
 %     feat(ind,:) = 0;
     img.feat = [];
@@ -84,7 +84,7 @@ toc
 
 %% classify
 numImg = length(img_all);
-X_train = zeros(100*64, numImg);
+X_train = zeros(4*15*3*100, numImg);
 for i = 1:numImg
     X_train(:,i) = img_all{i}.feat;
     y_train(i) = img_all{i}.label;

@@ -4,7 +4,7 @@ persistent centers;
 
 if isempty(centers)
     % load centers
-    v = load('../expData/ped_centers_w100_a0_sig001_20141030','centers');
+    v = load('../expData/ped_centers_w100_a0_sig001_20141104','centers');
     centers = v.centers;
 end
 
@@ -24,7 +24,7 @@ img = imgAddSeg(img);
 img = imgAddHH(img);
 % img = imgAddSigma(img);
 
-block = genBlock([1 1 img.width img.height], nBins, nBins);
-[feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, block);
+cells = genCells([1 1 img.width img.height], nBins, nBins);
+[feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, cells);
 
 end
