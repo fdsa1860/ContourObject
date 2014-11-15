@@ -3,7 +3,7 @@
 % circle
 c = [ 3 4];
 r = 1;
-t = 0:0.5:2*pi;
+t = 0:0.05:2*pi;
 
 sx1 = c(1) + r * cos(t) + 0.0*randn(size(t));
 sy1 = c(2) + r * sin(t) + 0.000*randn(size(t));
@@ -27,7 +27,7 @@ sy3 = k * sx3 + b;
 
 hold on;plot(sx3,sy3,'r');hold off;
 
-L = 6;
+L = 40;
 
 ind1 = 1:1+L-1;
 % ind1 = 1:length(t);
