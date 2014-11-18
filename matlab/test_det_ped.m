@@ -12,9 +12,11 @@ opt.alpha = 0;
 opt.hankel_mode = 1;
 opt.nBins = 9;
 opt.minLen = 2 * opt.hankel_size + 2;
+opt.segLength = 2 * opt.hankel_size + 1;
 opt.draw = false;
 opt.verbose = true;
 opt.localDir = '/Users/xikangzhang/research/code/ContourObject/expData/ped_contour_fast/contour_%s_%05d';
+opt.segDir = '/Users/xikangzhang/research/code/ContourObject/expData/ped_seg_fast/seg_%s_h%02d_%05d';
 
 opt.dataset = 'mytrain';
 % opt = 'mytest';
@@ -30,16 +32,19 @@ tic
 img_all = img2contour_all(imgList, labels, opt);
 toc
 
+%% crop sontours into segments
+seg_all = imgContour2Seg_all(img_all, opt);
+
 %% pooling
 poolMaxSize = 50000;
 rng('default');
-numImg = length(img_all);
+numImg = length(seg_all);
 r = randperm(numImg);
 counter = 1;
 segPool = [];
 for i = 1:numImg
-    segPool = [segPool img_all{i}.seg];
-    counter = counter + length(img_all{i}.seg);
+    segPool = [segPool seg_all{r(i)}];
+    counter = counter + length(seg_all{r(i)});
     if counter > poolMaxSize, break; end
 end
 
@@ -69,8 +74,8 @@ numImg = length(img_all);
 for i = 1:numImg
 % for i = 1:1
     img = img_all{i};
-    c = genCells([1 1 img.width img.height], 4, 16);
-    [feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, block);
+    cells = genCells([1 1 img.width img.height], 4, 16);
+    [feat, ind] = structureBowFeatHHSigma(img.seg, centers, opt.alpha, cells);
 %     feat(ind,:) = 0;
     img.feat = [];
     img.feat = feat;

@@ -6,7 +6,7 @@ function seg = sigmaEst(seg)
 % vector
 
 if isempty(seg)
-%     seg().sigma = [];
+    seg().sigma = [];
     return;
 end
 

@@ -27,9 +27,9 @@ for i = 1:numImg
         img.width = size(I, 2);
         img.height = size(I, 1);
         img.contour = contour;
-        img = imgAddSeg(img);
-        img = imgAddHH(img);
-        img = imgAddSigma(img);
+%         img = imgAddSeg(img);
+%         img = imgAddHH(img);
+%         img = imgAddSigma(img);
         img.label = labels(i);
         save(sprintf(opt.localDir, opt.dataset, i), 'img');
     end
