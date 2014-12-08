@@ -14,20 +14,20 @@ end
 
 % get current directory with forward slashes
 
-cwd=cd;
+cwd='/Users/xikangzhang/research';
 cwd(cwd=='\')='/';
 
 % change this path to point to your copy of the PASCAL VOC data
 % VOCopts.datadir=[cwd '/'];
-VOCopts.datadir=[cwd '/../../../data/'];
+VOCopts.datadir=[cwd '/data/pascal/'];
 
 % change this path to a writable directory for your results
 % VOCopts.resdir=[cwd '/results/' VOCopts.dataset '/'];
-VOCopts.resdir=[cwd '/../expData/results/' VOCopts.dataset '/'];
+VOCopts.resdir=[cwd '/code/ContourObject/expData/results/' VOCopts.dataset '/'];
 
 % change this path to a writable local directory for the example code
 % VOCopts.localdir=[cwd '/local/' VOCopts.dataset '/'];
-VOCopts.localdir=[cwd '/../expData/local/' VOCopts.dataset '/'];
+VOCopts.localdir=[cwd '/code/ContourObject/expData/local/' VOCopts.dataset '/'];
 
 % initialize the test set
 
