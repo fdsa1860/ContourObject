@@ -2,9 +2,9 @@
 
 clc;close all;clear;
 % change this path if you install the VOC code elsewhere
-addpath(genpath('../3rdParty/VOCdevkit/VOCcode/'));
 addpath(genpath('../3rdParty/'));
 addpath(genpath('../matlab'));
+addpath(genpath('../mex'));
 
 % initialize VOC options
 VOCinit;
@@ -13,7 +13,7 @@ VOCinit;
 for i=1:VOCopts.nclasses
 % for i=2
     cls=VOCopts.classes{i};
-    load ../expData/voc_dsca_notLine_centers_w10_a0_h4_sig001_20141023;
+    load ../expData/voc_centers_w100_a0_sig001_20141205.mat;
 %     detector = [];
     detector = vocDetectTrain(VOCopts, cls, centers);       % train detector
 %     save(sprintf('voc_detector_%s_20141016', cls), 'detector');

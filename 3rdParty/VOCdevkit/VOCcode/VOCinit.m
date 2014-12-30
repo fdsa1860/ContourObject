@@ -131,3 +131,6 @@ VOCopts.minoverlap=0.5;
 VOCopts.exannocachepath=[VOCopts.localdir '%s_anno.mat'];
 
 VOCopts.exfdpath=[VOCopts.localdir '%s_fd.mat'];
+
+VOCopts.trainfdpath=[VOCopts.localdir 'train/%s_fd.mat'];
+VOCopts.hogtrainfdpath=[VOCopts.localdir 'hogtrain/%s_fd.mat'];

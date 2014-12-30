@@ -1,4 +1,4 @@
-function cells = genCells(win, nc, nr)
+function cells = genCells(win, sbin)
 % Input:
 % win: window's bounding box, [xTopLeft yTopLeft xBottomRight yBottomRight]
 % nc: number of column blocks
@@ -13,12 +13,15 @@ function cells = genCells(win, nc, nr)
 
 width = win(3) - win(1) + 1;
 height = win(4) - win(2) + 1;
-blockW = floor(width/nc);
-blockH = floor(height/nr);
+nc = round(width/sbin);
+nr = round(height/sbin);
+% nc = round(width/sbin)-2;
+% nr = round(height/sbin)-2;
 bbox = zeros(nr*nc, 4);
 for i = 1:nr
     for j = 1:nc
-        bbox((i-1)*nc+j, :) = [(j-1)*blockW+1 (i-1)*blockH+1 j*blockW i*blockH];
+        bbox((i-1)*nc+j, :) = [(j-1)*sbin+1, (i-1)*sbin+1, ...
+            min(j*sbin,width), min(i*sbin,height)];
     end
 end
 
