@@ -131,10 +131,16 @@ detector.FD(:, counter:end) = [];
 % svm cvx implementation
 % voc_CVXSVM;
 
-C = 0.01;
-wPos = 1/nnz(gt==1);
-wNeg = 1/nnz(gt==-1);
-detector.model = train(detector.gt',sparse(double(detector.FD)),sprintf('-s 2 -c %f -B 1 -w1 %f -w-1 %f -q', C, wPos, wNeg),'col');
+C = 10*nnz(detector.gt==1);
+wPos = 1/nnz(detector.gt==1);
+wNeg = 1/nnz(detector.gt==-1);
+% scale data
+maxRange = max(detector.FD, [], 2);
+minRange = min(detector.FD, [], 2);
+detector.midRange = (maxRange + minRange) / 2;
+detector.range = maxRange - minRange;
+FD_scaled = bsxfun(@rdivide, bsxfun(@minus, detector.FD, detector.midRange), detector.range/2);
+detector.model = train(detector.gt',sparse(double(FD_scaled)),sprintf('-s 2 -c %f -B 1 -w1 %f -w-1 %f -q', C, wPos, wNeg),'col');
 
 % tic;
 % detector = hardNegMiningHOG(detector);

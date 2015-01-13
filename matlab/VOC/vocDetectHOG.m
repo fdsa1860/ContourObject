@@ -18,7 +18,8 @@ for i = 1:numROI
     H = hog(single(roiScale),8,9);
     feat(:, i) = H(:);
 end
-[~, ~, conf] = predict(ones(size(feat, 2), 1), sparse(feat'), detector.model, '-q');
+feat_scaled = bsxfun(@rdivide, bsxfun(@minus, feat, detector.midRange), detector.range/2);
+[~, ~, conf] = predict(ones(size(feat_scaled, 2), 1), sparse(double(feat_scaled')), detector.model, '-q');
 % numModel = length(detector.model);
 % for i = 1:4
 %     if isempty(feat), break; end
