@@ -1,17 +1,32 @@
 % train detector
 function detector = vocDetectTrain(VOCopts, cls, centers)
 
+OV_THRES = 0.5;
+BBSNUM_MAX = 10;
+
+% load object proposal model and parameters
+model=load('edges/models/forest/modelBsds'); model=model.model;
+model.opts.multiscale=0; model.opts.sharpen=2; model.opts.nThreads=4;
+% set up opts for edgeBoxes (see edgeBoxes.m)
+opts = edgeBoxes;
+opts.alpha = .65;     % step size of sliding window search
+opts.beta  = .75;     % nms threshold for object proposals
+opts.minScore = .01;  % min score of boxes to detect
+opts.maxBoxes = 1e4;  % max number of boxes to detect
+
 % load 'train' image set
 ids=textread(sprintf(VOCopts.imgsetpath,'train'),'%s');
 
 % extract features and bounding boxes
-detector.FD=[];
-detector.bbox=[];
-detector.gt=[];
-dscaNotLineAll = cell(1, length(ids));
+Dim = 14256;
+N_MAX = 120000;
+detector.FD= zeros(Dim, N_MAX, 'single');
+detector.bbox = zeros(N_MAX, 4);
+detector.gt = zeros(1, N_MAX);
+counter = 1;
 tic;
-% for i=1:length(ids)
-for i=1021:1022
+for i=1:length(ids)
+    % for i=1021:1022
     % display progress
     if toc>1
         fprintf('%s: train: %d/%d\n',cls,i,length(ids));
@@ -37,35 +52,85 @@ for i=1021:1022
     
     if gt
         % extract features for image
-%         try
-%             % try to load features
-%             load(sprintf(VOCopts.exfdpath,ids{i}),'cont');
-%         catch
-%             % compute and save features
-%             I=imread(sprintf(VOCopts.imgpath,ids{i}));
-%             cont = img2cont(I,0);
-%             save(sprintf(VOCopts.exfdpath,ids{i}),'cont');
-%         end
-        
-        I=imread(sprintf(VOCopts.imgpath,ids{i}));
-        
-        ind = find(~diff);
-        for j = 1:nnz(ind)
-            % extract bounding boxes for non-difficult objects
-            bb = rec.objects(ind(j)).bbox;
-            detector.bbox(end+1, :) = bb;
-            % mark image as positive or negative
-            detector.gt(end+1) = 2*clsinds(ind(j))-1;
-            roi = I(bb(2):bb(4), bb(1):bb(3), :);
-            roiScale = imresize(roi, [128, 64]);
-            cont = img2cont(roiScale, 0);
-            feat = cont2feat(cont, centers, [1 1 bb(3)-bb(1)+1 bb(4)-bb(2)+1]);
-            detector.FD(1:length(feat),end+1) = feat;
+        try
+            % try to load features
+            load(sprintf(VOCopts.trainfdpath,ids{i}),'bbs','labels','FD');
+        catch
+            % compute and save features
+            interval = 4;
+            FD = zeros(Dim, 2*BBSNUM_MAX*interval);
+            bbs = zeros(2*BBSNUM_MAX*interval, 4);
+            labels = zeros(1, 2*BBSNUM_MAX*interval);
+            cnt = 1;
+            
+            bbs_gt = cat(1, rec.objects(~diff & clsinds).bbox);
+            I = imread(sprintf(VOCopts.imgpath,ids{i}));
+
+            sc = 2^(1/interval);
+            for si = 1:interval
+                
+                I_scaled = imresize(I, 1/sc^(si-1),'bilinear');
+                bbs_gt_scaled = round(bbs_gt/sc^(si-1));
+                
+                rec_prop = edgeBoxes(I_scaled, model, opts );
+                bbs_prop = [rec_prop(:,1:2), rec_prop(:,1:2)+rec_prop(:,3:4)-1];
+                labels_prop = -ones(1, size(bbs_prop, 1));
+                if ~isempty(bbs_gt_scaled)
+                    for pi = 1:size(bbs_prop, 1)
+                        ov_max = 0;
+                        for gi = 1:size(bbs_gt_scaled, 1)
+                            ov = bbOverlap(bbs_prop(pi,:), bbs_gt(gi,:));
+                            if ov > ov_max, ov_max = ov; end
+                        end
+                        if ov_max > OV_THRES, labels_prop(pi) = 1; end
+                    end
+                end
+                
+                bbs_scale = [bbs_gt_scaled; bbs_prop];
+                labels_scale = [ ones(1, size(bbs_gt_scaled, 1)), labels_prop];
+                
+                bbs_pos = bbs_scale(labels_scale==1, :);
+                bbs_neg = bbs_scale(labels_scale==-1, :);
+                nP = min(nnz(labels_scale==1), BBSNUM_MAX);
+                nN = min(nnz(labels_scale==-1), BBSNUM_MAX);
+                bbs_scale = [bbs_pos(1:nP, :); bbs_neg(1:nN, :)];
+                labels_scale = [ones(1, nP), -ones(1, nN)];
+
+                nValid = nP + nN;
+                FD_scale = zeros(Dim, nValid);
+                for pi = 1:nValid
+                    bb = bbs_scale(pi,:);
+                    roi = I_scaled(bb(2):bb(4), bb(1):bb(3), :);
+                    roiScale = imresize(roi, [64, 64], 'bilinear');
+                    feat = img2feat_fast(roiScale, 8);
+                    FD_scale(:, pi) = feat(:);
+                end
+                bbs(cnt:cnt+nValid-1, :) = bbs_scale;
+                labels(cnt:cnt+nValid-1) = labels_scale;
+                FD(:, cnt:cnt+nValid-1) = FD_scale;
+                cnt = cnt + nValid;
+            end
+            bbs(cnt:end, :) = [];
+            labels(cnt:end) = [];
+            FD(:, cnt:end) = [];
+            save(sprintf(VOCopts.trainfdpath,ids{i}),'bbs','labels','FD');
         end
-        
+        nValid2 = size(bbs, 1);
+        assert(size(labels, 2)==nValid2);
+        assert(size(FD, 2)==nValid2);
+        detector.bbox(counter:counter+nValid2-1, :) = bbs;
+        detector.gt(counter:counter+nValid2-1) = labels;
+        detector.FD(:, counter:counter+nValid2-1) = FD;
+        counter = counter + nValid2;
     end
 end
+detector.bbox(counter:end, :) = [];
+detector.gt(counter:end) = [];
+detector.FD(:, counter:end) = [];
 
-detector.model = svmtrain(detector.gt',sparse(detector.FD'),'-t 0');
+% detector.model = svmtrain(detector.gt',sparse(detector.FD'),'-t 0');
+detector.model = train(detector.gt',sparse(double(detector.FD')),'-s 2');
+
+detector = hardNegMining(VOCopts, cls, detector);
 
 end

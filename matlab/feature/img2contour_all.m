@@ -4,14 +4,14 @@ if strcmp(opt.dataset, 'mytrain')
     margin = 16;
 elseif strcmp(opt.dataset, 'mytest')
     margin = 3;
-elseif strcmp(opt.dataset, 'caltech101')
+else
     margin = 0;
 end
 
 numImg = length(imgList);
 img_all = cell(1, numImg);
 for i = 1:numImg
-    if opt.verbose, fprintf('Processing image %d ... \n', i); end
+    if opt.verbose, fprintf('Processing image %d/%d ... \n', i, numImg); end
     try
         load(sprintf(opt.localDir, opt.dataset, i), 'img');
     catch

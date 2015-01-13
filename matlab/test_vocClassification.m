@@ -2,7 +2,6 @@
 
 clc;close all;clear;
 % change this path if you install the VOC code elsewhere
-addpath(genpath('../3rdParty/VOCdevkit/VOCcode/'));
 addpath(genpath('../3rdParty/'));
 addpath(genpath('../matlab'));
 

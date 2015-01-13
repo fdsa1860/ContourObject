@@ -1,4 +1,4 @@
-function [c,BB]=vocDetect(VOCopts, detector, cont, centers, bbs, I)
+function [c,BB]=vocDetect(VOCopts, detector, centers, bbs, I)
 
 
 
@@ -13,10 +13,11 @@ conf = zeros(n, 1);
 for i = 1:n
     bb = bbs(i, 1:4);
     roi = I(bb(2):bb(4), bb(1):bb(3), :);
-    roiScale = imresize(roi, [128, 64]);
-    cont = img2cont(roiScale, 0);
-    feat = cont2feat(cont, centers, [1 1 bb(3)-bb(1)+1 bb(4)-bb(2)+1]);
-    [~, ~, conf(i)] = svmpredict(ones(size(feat, 2), 1), sparse(feat'), detector.model, '-q');
+    roiScale = imresize(roi, [64, 64], 'bilinear');
+    feat = img2feat_fast(roiScale, 8);
+    feat = feat(:);
+%     [~, ~, conf(i)] = svmpredict(ones(size(feat, 2), 1), sparse(feat'), detector.model, '-q');
+    [~, ~, conf(i)] = predict(1, sparse(double(feat)'), detector.model, '-q');
 end
 
 BB = bbs(:, 1:4);

@@ -3,7 +3,7 @@ function out = vocDetectTest(VOCopts, cls, detector, centers)
 
 % load test set ('val' for development kit)
 [ids,gt]=textread(sprintf(VOCopts.imgsetpath,VOCopts.testset),'%s %d');
-model=load('structuredEdgeDetector/models/forest/modelBsds'); model=model.model;
+model=load('edges/models/forest/modelBsds'); model=model.model;
 model.opts.multiscale=0; model.opts.sharpen=2; model.opts.nThreads=4;
 % set up opts for edgeBoxes (see edgeBoxes.m)
 opts = edgeBoxes;
@@ -39,7 +39,7 @@ for i=1:length(ids)
     I=imread(sprintf(VOCopts.imgpath,ids{i}));
     bbs = edgeBoxes( I, model, opts );
     % compute confidence of positive classification and bounding boxes
-    [c,BB]=vocDetect(VOCopts,detector,[],centers, bbs, I);
+    [c,BB]=vocDetect(VOCopts,detector,centers, bbs, I);
 
     % write to results file
     for j=1:length(c)
