@@ -11,7 +11,7 @@ addpath(genpath('../mex'));
 dataDir = '~/research/data/BSR/BSDS500/data';
 
 % parameters
-opt.hankel_size = 4;
+opt.hankel_size = 7;
 opt.sampleMode = 1;
 opt.sampleLen = 1;
 opt.minLen = 2 * opt.hankel_size + 2;
@@ -66,19 +66,19 @@ for i = 1:numImg
 end
 
 %% computer cluster centers
-nc = 100;
-% load ../expData/ped_sD_a0_notClean_20141117;
-% tic;
-% [centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha);
-% toc
+nc = 10;
+load ../expData/bsds_sD_h7_a0_20150114;
+tic;
+[centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD);
+toc
 % save bsds_sD_a0_20150114 sD;
 % save bsds_centers_w100_a0_sig001_20150114 centers sLabel;
-load ../expData/bsds_centers_w100_a0_sig001_20150114
+% load ../expData/bsds_centers_w50_a0_sig001_20150114
 
 %% show correspondence map
 seg_test = cell(1, nTest);
-for i = 1:nTest
-% for i = 1
+% for i = 1:nTest
+for i = 1
     t = importdata(testFileNameList{i});
     bw = t{opt.subjectNum}.Boundaries;
     cont = extractContBW(single(bw));
@@ -108,7 +108,7 @@ for i = 1:nTest
     end
     
     % show image
-    color = hsv(98);
+    color = hsv(length(centers));
     I = zeros([hgt, wid, 3]);
     for j = 1:length(map)
         x = max(1, floor(map(j).pts(1)));
@@ -118,8 +118,9 @@ for i = 1:nTest
     imshow(I);
     colormap(color);
     hbar = colorbar;
-    pause;
     % set(hbar, 'YTickLabel', [1:98]);
+%     pause;
+    keyboard;
 end
 
 1
