@@ -2,6 +2,7 @@
 close all;clear;clc;
 addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
+addpath(genpath('../mex'));
 
 % load image
 % I = im2double(imread('../inputData/image/synthetic.jpg'));    % synthetic image

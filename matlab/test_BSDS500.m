@@ -8,7 +8,7 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 addpath(genpath('../mex'));
 
-dataDir = '/home/xikang/research/data/BSR/BSDS500/data';
+dataDir = '~/research/data/BSR/BSDS500/data';
 
 % parameters
 opt.hankel_size = 4;
@@ -65,8 +65,8 @@ nc = 100;
 % tic;
 % [centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha);
 % toc
-% save ped_sD_a0_notClean_20141117 sD;
-% save ped_centers_w100_a0_sig001_20141117 centers sLabel;
+% save bsds_sD_a0_20150114 sD;
+% save bsds_centers_w100_a0_sig001_20150114 centers sLabel;
 load ../expData/bsds_centers_w100_a0_sig001_20150114
 
 1
