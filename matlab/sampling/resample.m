@@ -9,7 +9,9 @@
 %    out: the data after resampled
 
 function out = resample(data, mode, fixed)
- 
+
+if size(data, 1)<2, out = data; return; end
+
 % compute the length of the input curve
 d = sqrt(sum(diff(data).^2,2));
 L = cumsum([0;d]);
@@ -28,6 +30,11 @@ for i = 2:n
         index(m+1) = i;
         m = m + 1;
     end
+end
+
+isClosed = ~any(data(1,:)-data(end,:));
+if isClosed && ~any(index==n)
+    index(end+1) = n;
 end
 
 out = data(index,:);
