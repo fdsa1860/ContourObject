@@ -66,14 +66,14 @@ for i = 1:numImg
 end
 
 %% computer cluster centers
-nc = 10;
-load ../expData/bsds_sD_h7_a0_20150114;
-tic;
-[centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD);
-toc
+% nc = 10;
+% load ../expData/bsds_sD_h7_a0_20150114;
+% tic;
+% [centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD);
+% toc
 % save bsds_sD_a0_20150114 sD;
 % save bsds_centers_w100_a0_sig001_20150114 centers sLabel;
-% load ../expData/bsds_centers_w50_a0_sig001_20150114
+load ../expData/bsds_centers_w10_h7_a0_sig001_20150114
 
 %% show correspondence map
 seg_test = cell(1, nTest);
