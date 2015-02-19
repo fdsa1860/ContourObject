@@ -1,3 +1,4 @@
+
 % test_BSDS500
 % get contours from training data, do clustering, then label the test
 % contours, output label maps
@@ -55,66 +56,25 @@ for i = 1
     seg_train{i} = seg;
 end
 
-index = 1:length(seg);
-label = zeros(1, length(seg));
-X = zeros(2*(opt.segLength-4), length(seg));
+%%
+order = 6;
+epsilon = 0.3;
+X = zeros(length(seg), 2);
 for i = 1:length(seg)
-    tmp = seg(i).vel';
-    X(:, i) = tmp(:);
+    X(i, :) = seg(i).vel(1,:);
 end
-FF = zeros(4*(opt.segLength-4),10);
+[x, label] = indep_dyn_switch_detect1(X,inf,epsilon,order);
+label = [zeros(1,order) label];
 
-epsilon = 1e-1; fix = 1; tol = 1e-3; step = 1;
-for iter = 1:10
-    if isempty(X), break; end
-    [F,F_i,T] = call_ssrrr_lp(X,epsilon,fix,tol,step);
-    % ind = find(abs(F'*X) < epsilon);
-    FF(:,iter) = F;
-    ind = find(max(abs(reshape(F,size(F,1)/2,2)'*X))<=epsilon);
-    label(index(ind)) = iter;
-    X(:,ind) = [];
-    index(ind) = [];
-    fprintf('iter %d...\n',iter);
-end
-
-color = hsv(10);
-plot(contour(5).points(:,2), contour(5).points(:,1),'.');hold on;
+uLabel = unique(label);
+nL = length(uLabel);
+color = hsv(nL);
+figure;plot(contour(5).points(:,2), contour(5).points(:,1),'.');hold on;
 set(gca,'YDir','reverse');
-for j = 1:10
+for j = 1:nL
     ind = find(label==j);
     for i=1:length(ind)
         plot(seg(ind(i)).loc(1), seg(ind(i)).loc(2),'.','MarkerEdgeColor',color(j,:));
     end
 end
 hold off;
-
-
-%% show correspondence map
-map(1:length(seg)) = struct('pts',[0 0], 'label', 0);
-[~,file,~] = fileparts(trainFileNameList{1});
-I = imread(sprintf(fullfile(dataDir,'images','train','%s.jpg'), file));
-hgt = size(I, 1);
-wid = size(I, 2);
-count = 1;
-for j = 1:length(label)
-    map(count).pts = round(seg(j).loc);
-    map(count).label = label(j);
-    count = count + 1;
-end
-    
-% show image
-color = hsv(length(unique(label))-1);
-I = zeros([hgt, wid, 3]);
-for j = 1:length(map)
-    if map(j).label==0, continue; end
-    x = max(1, floor(map(j).pts(1)));
-    y = max(1, floor(map(j).pts(2)));
-    I(y, x, :) = color(map(j).label, :);
-end
-imshow(I);
-colormap(color);
-hbar = colorbar;
-set(hbar, 'YTickLabel', [1:10]);
-
-
-
