@@ -13,7 +13,15 @@ nR = length(label);
 cont = cell(1, nMax);
 cnt = 1;
 for i = 1:nR
-    b = bwboundaries(R==label(i), 8);
+    b = bwboundaries(R==label(i), 8, 'noholes');
+%     % skip contours that contain image boundary parts
+%     for j = 1:length(b)
+%         ind = b{j}(:,1)==1 | b{j}(:,1)==h | b{j}(:,2)==1 | b{j}(:,2)==w;
+%         if any(ind), continue; end
+%         cont(cnt) = b(j);
+%         cnt = cnt + 1;
+%     end
+    % erase image boundary parts
     for j = 1:length(b)
         ind = b{j}(:,1)==1 | b{j}(:,1)==h | b{j}(:,2)==1 | b{j}(:,2)==w;
         ind = ~ind;

@@ -1,5 +1,5 @@
 
-function [x group] = indep_dyn_switch_detect1(data,norm_used,epsilon,order)
+function [x group] = indep_dyn_switch_detect1(data,norm_used,epsilon,order,draw)
 
 %without offset
 [num_frame num_pc] = size(data);
@@ -38,7 +38,7 @@ conv_criteria = 3;
 for k = 1:100
     cvx_begin
     variable x_log(num_param)
-    variable z(num_frame-1)    
+    variable z(num_frame-1)
     mx_log = reshape(x_log,[order,num_frame]);
     mx_log = repmat(mx_log,num_pc,1);
     mx_log = mx_log(:);
@@ -88,17 +88,6 @@ if isempty(x); display('infeasible!!'); group =[]; return; end
 % if ~isempty(findstr(cvx_status,'Failed')); display('Solver Failed!');group =[]; return; end
 
 p_est = x(1:num_param);
-
-figure;
-plot(p_est(1:order:end),'b*');
-for i = 1:order
-    title('Segmentation Drama Sequence');
-    subplot(order,1,i);plot(p_est(i:order:end),'b*');
-    y = strcat('p_',num2str(i));
-    ylabel(y);
-end
-% figure;plot(A*x-rhs)
-
 ind1 = find( z > delta );
 ind = [1 ind1' num_frame];
 l = length(ind);
@@ -108,4 +97,20 @@ group = [];
 for i = 1:l-1;
     group = [group i*ones(1,ind(i+1)-ind(i))];
 end
-figure; plot(group,'b*');
+
+if ~exist('draw','var')
+    draw = false;
+end
+
+if draw
+    figure;
+    plot(p_est(1:order:end),'b*');
+    for i = 1:order
+        title('Segmentation Drama Sequence');
+        subplot(order,1,i);plot(p_est(i:order:end),'b*');
+        y = strcat('p_',num2str(i));
+        ylabel(y);
+    end
+    % figure;plot(A*x-rhs)
+    figure; plot(group,'b*');
+end

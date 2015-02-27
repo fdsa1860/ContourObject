@@ -54,15 +54,6 @@ plot(x4,y4,'r');
 hold;
 axis equal
 
-% x1 = x1 - mean(x1);
-% y1 = y1 - mean(y1);
-% x2 = x2 - mean(x2);
-% y2 = y2 - mean(y2);
-% x3 = x3 - mean(x3);
-% y3 = y3 - mean(y3);
-% x4 = x4 - mean(x4);
-% y4 = y4 - mean(y4);
-
 u1 = diff(x1);
 v1 = diff(y1);
 u2 = diff(x2);
@@ -123,6 +114,22 @@ Hd4 = [Hu4;Hv4];
 % Hd2 = Hd2';
 % Hd3 = Hd3';
 % Hd4 = Hd4';
+
+Hu1_p = Hu1 / (norm(Hu1*Hu1','fro')^0.5);
+Hu2_p = Hu2 / (norm(Hu2*Hu2','fro')^0.5);
+Hu3_p = Hu3 / (norm(Hu3*Hu3','fro')^0.5);
+Hu4_p = Hu4 / (norm(Hu4*Hu4','fro')^0.5);
+Hv1_p = Hv1 / (norm(Hv1*Hv1','fro')^0.5);
+Hv2_p = Hv2 / (norm(Hv2*Hv2','fro')^0.5);
+Hv3_p = Hv3 / (norm(Hv3*Hv3','fro')^0.5);
+Hv4_p = Hv4 / (norm(Hv4*Hv4','fro')^0.5);
+
+d12 = 2-0.5*norm(Hu1_p*Hu1_p'+Hu2_p*Hu2_p','fro')-0.5*norm(Hv1_p*Hv1_p'+Hv2_p*Hv2_p','fro')
+d13 = 2-0.5*norm(Hu1_p*Hu1_p'+Hu3_p*Hu3_p','fro')-0.5*norm(Hv1_p*Hv1_p'+Hv3_p*Hv3_p','fro')
+d23 = 2-0.5*norm(Hu2_p*Hu2_p'+Hu3_p*Hu3_p','fro')-0.5*norm(Hv2_p*Hv2_p'+Hv3_p*Hv3_p','fro')
+d14 = 2-0.5*norm(Hu1_p*Hu1_p'+Hu4_p*Hu4_p','fro')-0.5*norm(Hv1_p*Hv1_p'+Hv4_p*Hv4_p','fro')
+d24 = 2-0.5*norm(Hu2_p*Hu2_p'+Hu4_p*Hu4_p','fro')-0.5*norm(Hv2_p*Hv2_p'+Hv4_p*Hv4_p','fro')
+d34 = 2-0.5*norm(Hu3_p*Hu3_p'+Hu4_p*Hu4_p','fro')-0.5*norm(Hv3_p*Hv3_p'+Hv4_p*Hv4_p','fro')
 
 tic;
 

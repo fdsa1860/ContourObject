@@ -11,13 +11,13 @@ thr = 0.99;
 D = zeros(N,N);
 for i=1:N
     for j=i+1:N
-        D(i,j) = hankeletAngle(X{i},X{j},thr);
-%         D(i,j) = mySubspaceAngle(X{i},X{j},thr);
+%         D(i,j) = hankeletAngle(X{i},X{j});
+        D(i,j) = myHankeletAngle2(X{i},X{j});
     end
 end
 
 D = D + D';
-W = exp(-D);
+W = exp(-1e7*D);
 
 addpath('../3rdParty/Ncut_9');
 

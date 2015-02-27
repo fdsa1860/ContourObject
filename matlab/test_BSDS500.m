@@ -80,10 +80,11 @@ seg_test = cell(1, nTest);
 % for i = 1:nTest
 for i = 1
     t = importdata(testFileNameList{i});
-    bw = t{opt.subjectNum}.Boundaries;
-    cont = extractContBW(single(bw));
+%     bw = t{opt.subjectNum}.Boundaries; cont = extractContBW(single(bw));
+    R = t{opt.subjectNum}.Segmentation; cont = extractContFromRegion(R);
     contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
     contour = filterContourWithFixedLength(contour, opt.segLength);
+%     contour = filterContourWithLPF(contour);
     seg = slideWindowContour2Seg(contour, opt.segLength);
     seg = addHH(seg);
     seg = sigmaEst(seg);
@@ -91,7 +92,7 @@ for i = 1
     
     clear map;
     map(1:length(seg)) = struct('pts',[0 0], 'label', 0);
-    [~,file,~] = fileparts(testFileNameList{1});
+    [~,file,~] = fileparts(testFileNameList{i});
     I = imread(sprintf(fullfile(dataDir,'images','test','%s.jpg'), file));
     hgt = size(I, 1);
     wid = size(I, 2);

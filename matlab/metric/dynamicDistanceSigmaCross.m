@@ -25,6 +25,6 @@ end
 % end
 
 D = mexDynamicDistance(X, centers);
-% 1
+% D = mexDynamicDistanceXY(X, centers);
 
 end

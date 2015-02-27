@@ -1,4 +1,4 @@
-function [centers, label, D] = nCutContourHHSigma(X, k, alpha, D, scale_sig, order)
+function [centers, label, D, W] = nCutContourHHSigma(X, k, alpha, D, scale_sig, order)
 % nCutContourHHSigma: cluster data using hankelet metric and normalized
 % sigular values
 %

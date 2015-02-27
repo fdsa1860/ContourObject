@@ -2,13 +2,14 @@
 % Xikang Zhang, 06/16/2014
 
 clc;clear;close all;
-addpath('../3rdParty/hstln');
+addpath(genpath('../3rdParty'));
+addpath(genpath('../matlab'));
 
 %% generate middle size data
 genMidSizeData;
 
 %% sample data along the curve
-data = sampleAlongCurve(data,1,1);
+% data = sampleAlongCurve(data,1,1);
 
 %% display data
 figure(1);
@@ -28,7 +29,7 @@ seg2{si} = conv2(seg{si},h,'valid');
 end
 
 %% match curve
-selInd = 24;
+selInd = 45;
 x1 = seg2{selInd};
 y1 = zeros(length(seg2),1);
 y2 = zeros(length(seg2),1);
@@ -38,9 +39,9 @@ for si = 1:length(seg2)
 % for si = 4
 % if si==8, keyboard; end
 x2 = seg2{si};
-y1(si) = hankeletAngle(x1,x2,0.99);
-% y1(si) = hankeletAngle(x1,x2);
-% y2(si) = myHankeletAngle(x1,x2,0.99);
+% y1(si) = hankeletAngle(x1,x2,0.99);
+y1(si) = hankeletAngle(x1,x2);
+y2(si) = myHankeletAngle2(x1,x2);
 y3(si) = mySubspaceAngle(x1,x2,0.99);
 y4(si) = mySubspaceAngle_vel(x1,x2,0.99);
 
@@ -58,7 +59,7 @@ for si = 1:length(seg)
     hold off;
 end
 
-ind = find(y1<0.6);
+ind = find(y1<1e-8);
 for i = 1:length(ind)
     x2 = seg{ind(i)};
     hold on;plot(x2(:,1),x2(:,2),'r.');hold off;
@@ -98,11 +99,12 @@ si = 46;
 plot(seg2{si}(:,1),'b.');hold on;plot(seg2{si}(:,2),'g.');hold off;legend dx dy;title('sin');
 
 %% cluster
+nc = 12;
 figure(5);
 % labelColor = 'bgrmcyk';
-labelColor = lines;
+labelColor = jet(nc);
 % [label,X_center] = kmeansContour(seg2,3);
-[label,X_center,cntrInd,W] = nCutContour(seg2,5);
+[label,X_center,cntrInd,W] = nCutContour(seg2,nc);
 % for si = 1:length(seg)
 %     hold on;plot(seg{si}(:,1),seg{si}(:,2));hold off;
 % end
