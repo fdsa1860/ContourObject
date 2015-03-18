@@ -33,6 +33,7 @@ end
 %% load cluster centers
 % load ../expData/bsds_centers_w10_h10_a0_sig001_20150221
 load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_20150225
+% load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtHcplx_20150302
 
 %% show correspondence map
 % for i = 1:n

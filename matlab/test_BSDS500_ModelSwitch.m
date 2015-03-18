@@ -87,11 +87,12 @@ end
 
 %% computer cluster centers
 nc = 10;
-load ../expData/bsds_sD_h10_HtH_a0_20150225;
+load ../expData/bsds_sD_h10_HtHcplx_a0_20150302;
+% load ../expData/bsds_sD_h10_HtH_a0_20150225;
 % load ../expData/bsds_sD_h10_HxytHxy_a0_20150225;
 % load ../expData/bsds_sD_h10_a0_20150221
 % tic;
-[centers, sLabel, sD, W] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD, 1e-4, 1);
+[centers, sLabel, sD, W] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD, 1e-5, 1);
 % [centers, sLabel, sD, W] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha);
 % toc
 % save bsds_sD_a0_20150114 sD;
