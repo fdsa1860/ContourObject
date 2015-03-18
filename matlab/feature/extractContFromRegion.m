@@ -9,6 +9,7 @@ nMax = 1000;
 w = size(R, 2);
 h = size(R, 1);
 label = unique(R);
+label = label(label~=0);
 nR = length(label);
 cont = cell(1, nMax);
 cnt = 1;

@@ -17,9 +17,9 @@ opt.minLen = 2 * opt.hankel_size + 2;
 opt.segLength = 2 * opt.hankel_size + 1;
 opt.numSubjects = 6;
 opt.alpha = 0;
-opt.draw = false;
+opt.draw = true;
 opt.verbose = true;
-opt.dataset = 'test';
+opt.dataset = 'train';
 
 %% get file name list
 files = dir(fullfile(dataDir,'groundTruth',opt.dataset,'*.mat'));
@@ -32,12 +32,24 @@ end
 
 %% load cluster centers
 % load ../expData/bsds_centers_w10_h10_a0_sig001_20150221
-load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_20150225
-% load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtHcplx_20150302
+% load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_20150309
+% load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_20150225
+% load ../expData/bsds_centers_w28_h10_a0_s5_o1_HtH_20150225
+% load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_knn20_20150309
+% load ../expData/bsds_centers_w22_h10_a0_s6_o1_HtH_greedy_20150313
+% load ../expData/bsds_centers_w24_h10_a0_s6_o1_HtH_greedy2_20150313
+% load ../expData/bsds_centers_w16_h10_a0_s5_o1_HtH_greedy2_20150313
+% load ../expData/bsds_centers_w18_h10_a0_s6_o1_HtH_20150314
+% load ../expData/bsds_centers_w13_h10_a0_s5_o1_HtH_20150314
+% load ../expData/bsds_centers_w30_h10_a0_s5_o2_HtH_20150314
+% load ../expData/bsds_centers_w30_h10_a0_s5h_o1_HtH_20150314
+load ../expData/bsds_centers_w31_h10_a0_s6_o1_HtH_20150314
+% load ../expData/bsds_centers_w32_h10_a0_s3e6_o1_HtH_20150314
+% load ../expData/bsds_centers_w19_h10_a0_s5_o1_HtH_20150315
 
 %% show correspondence map
-% for i = 1:n
-for i = [ 139 193]
+for i = 1:n
+% for i = [ 139 193]
     [~,fname,ext] = fileparts(fileNameList{i});
     t = importdata(fileNameList{i});
 %     I = imread(sprintf(fullfile(dataDir,'images',opt.dataset,'%s.jpg'), fname));
@@ -96,8 +108,21 @@ for i = [ 139 193]
         dymGroundTruth{k}.dymBoundaries = dymBoundaries;
     end
     save(sprintf('../expData/dymGroundTruth/%s/%s.mat', opt.dataset, fname), 'dymGroundTruth');
-%     pause;
-    keyboard;
+
+    if opt.draw
+        nc = length(centers);
+        for j = 1:length(dymGroundTruth)
+            E = dymEdgeDraw(dymGroundTruth{j}.dymBoundaries,nc);
+            imwrite(im2uint8(E),sprintf('../expData/dymGroundTruthImg/%s/%s_gt%d_w%d.png', opt.dataset, fname, j, nc));
+%             hFig = figure;
+%             set(hFig, 'Position', [100*(j-1)+1 200*(j-1)+1 100*j 200*j]);
+%             set(gca,'YDir','reverse');
+%             imshow(E);
+        end
+    end
+    
+    %     pause;
+%     keyboard;
 end
 
 1

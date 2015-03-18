@@ -87,7 +87,8 @@ end
 
 %% computer cluster centers
 nc = 10;
-load ../expData/bsds_sD_h10_HtHcplx_a0_20150302;
+% load ../expData/bsds_sD_h10_HtHcplx_a0_20150302;
+load ../expData/bsds_sD_h10_HtH_a0_20150309;
 % load ../expData/bsds_sD_h10_HtH_a0_20150225;
 % load ../expData/bsds_sD_h10_HxytHxy_a0_20150225;
 % load ../expData/bsds_sD_h10_a0_20150221
