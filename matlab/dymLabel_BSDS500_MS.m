@@ -43,7 +43,7 @@ for i = [ 139 193]
     dymGroundTruth = cell(1, length(t));
     for k = 1:length(t)
         R = t{k}.Segmentation;
-        R = imresize(R,2,'bilinear');
+%         R = imresize(R,2,'bilinear');
         try
             load(sprintf('../expData/ModelSwitchSegments/seg_%s_%d_%d.mat',opt.dataset,i,k),'seg','shortSeg');
         catch

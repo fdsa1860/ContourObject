@@ -19,7 +19,7 @@ opt.numSubjects = 6;
 opt.alpha = 0;
 opt.draw = false;
 opt.verbose = true;
-opt.dataset = 'test';
+opt.dataset = 'train';
 
 %% get file name list
 files = dir(fullfile(dataDir,'groundTruth',opt.dataset,'*.mat'));
@@ -46,7 +46,7 @@ for i = 139
         contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
         contour = filterContourWithFixedLength(contour, opt.segLength);
         seg = slideWindowContour2Seg(contour, opt.segLength);
-        seg = addHH(seg);
+        seg = addHH(seg,opt.hankel_size+1,'HHt');
         seg = sigmaEst(seg);
         
         clear map;
@@ -79,7 +79,7 @@ for i = 139
     end
     save(sprintf('../expData/dymGroundTruth/%s/%s.mat', opt.dataset, fname), 'dymGroundTruth');
     %     pause;
-    %     keyboard;
+%         keyboard;
 end
 
 1
