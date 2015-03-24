@@ -20,6 +20,7 @@ opt.alpha = 0;
 opt.draw = true;
 opt.verbose = true;
 opt.dataset = 'train';
+opt.metric = 'HtH';
 
 %% get file name list
 files = dir(fullfile(dataDir,'groundTruth',opt.dataset,'*.mat'));
@@ -32,7 +33,7 @@ end
 
 %% load cluster centers
 % load ../expData/bsds_centers_w10_h10_a0_sig001_20150221
-% load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_20150309
+load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_20150309
 % load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_20150225
 % load ../expData/bsds_centers_w28_h10_a0_s5_o1_HtH_20150225
 % load ../expData/bsds_centers_w10_h10_a0_s5_o1_HtH_knn20_20150309
@@ -43,12 +44,16 @@ end
 % load ../expData/bsds_centers_w13_h10_a0_s5_o1_HtH_20150314
 % load ../expData/bsds_centers_w30_h10_a0_s5_o2_HtH_20150314
 % load ../expData/bsds_centers_w30_h10_a0_s5h_o1_HtH_20150314
-load ../expData/bsds_centers_w31_h10_a0_s6_o1_HtH_20150314
+% load ../expData/bsds_centers_w31_h10_a0_s6_o1_HtH_20150314
 % load ../expData/bsds_centers_w32_h10_a0_s3e6_o1_HtH_20150314
 % load ../expData/bsds_centers_w19_h10_a0_s5_o1_HtH_20150315
+% load ../expData/bsds_centers_w20_h10_a0_s5_o1_HtH_20150319
+% load ../expData/bsds_centers_w30_h10_a0_s5_o1_HtH_20150319
+% load ../expData/bsds_centers_w10_h10_a0_s3_o1_HHt_20150322
 
 %% show correspondence map
-for i = 1:n
+% for i = 1:n
+for i = 108
 % for i = [ 139 193]
     [~,fname,ext] = fileparts(fileNameList{i});
     t = importdata(fileNameList{i});
@@ -69,6 +74,9 @@ for i = 1:n
             seg = sigmaEst(seg);
             save(sprintf('../expData/ModelSwitchSegments/seg_%s_%d_%d.mat',opt.dataset,i,k),'seg','shortSeg');
         end
+        
+        seg = addHH(seg, opt.hankel_size, opt.metric);
+        seg = sigmaEst(seg);
         
         clear map;
         map(1:length(seg)) = struct('pts',[0 0], 'label', 0);

@@ -17,9 +17,10 @@ opt.minLen = 2 * opt.hankel_size + 2;
 opt.segLength = 2 * opt.hankel_size + 1;
 opt.numSubjects = 6;
 opt.alpha = 0;
-opt.draw = false;
+opt.draw = true;
 opt.verbose = true;
 opt.dataset = 'train';
+opt.metric = 'HtH';
 
 %% get file name list
 files = dir(fullfile(dataDir,'groundTruth',opt.dataset,'*.mat'));
@@ -31,11 +32,16 @@ end
 
 
 %% load cluster centers
-load ../expData/bsds_centers_w10_h7_a0_sig001_20150114
+% load ../expData/bsds_centers_w10_h7_a0_sig001_20150114
+load ../expData/bsds_centers_w10_h7_a0_s5_o1_HtH_20150321
+% load ../expData/bsds_centers_w20_h7_a0_s5_o1_HtH_20150322
+% load ../expData/bsds_centers_w30_h7_a0_s5_o1_HtH_20150322
+% load ../expData/bsds_centers_w10_h7_a0_s3_o1_HHt_20150322
 
 %% show correspondence map
 % for i = 1:n
-for i = 139
+for i = 108
+% for i = 139
     [~,fname,ext] = fileparts(fileNameList{i});
     t = importdata(fileNameList{i});
 %     I = imread(sprintf(fullfile(dataDir,'images',opt.dataset,'%s.jpg'), fname));
@@ -45,8 +51,9 @@ for i = 139
         R = t{k}.Segmentation; cont = extractContFromRegion(R);
         contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
         contour = filterContourWithFixedLength(contour, opt.segLength);
+        contour = filterContourWithLPF(contour);
         seg = slideWindowContour2Seg(contour, opt.segLength);
-        seg = addHH(seg,opt.hankel_size+1,'HHt');
+        seg = addHH(seg, opt.hankel_size+1, opt.metric);
         seg = sigmaEst(seg);
         
         clear map;
@@ -78,6 +85,19 @@ for i = 139
         dymGroundTruth{k}.dymBoundaries = dymBoundaries;
     end
     save(sprintf('../expData/dymGroundTruth/%s/%s.mat', opt.dataset, fname), 'dymGroundTruth');
+    
+    if opt.draw
+        nc = length(centers);
+        for j = 1:length(dymGroundTruth)
+            E = dymEdgeDraw(dymGroundTruth{j}.dymBoundaries,nc);
+            imwrite(im2uint8(E),sprintf('../expData/dymGroundTruthImg_SW/%s/%s_gt%d_w%d.png', opt.dataset, fname, j, nc));
+%             hFig = figure;
+%             set(hFig, 'Position', [100*(j-1)+1 200*(j-1)+1 100*j 200*j]);
+%             set(gca,'YDir','reverse');
+%             imshow(E);
+        end
+    end
+    
     %     pause;
 %         keyboard;
 end

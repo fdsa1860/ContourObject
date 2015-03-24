@@ -47,28 +47,28 @@ end
 % D(solitude, :) = [];
 % D(:, solitude) = [];
 
-% tmp = (D/scale_sig).^order;
-% W = exp(-tmp);     % the similarity matrix
-% NcutDiscrete = ncutW(W, k);
-% label = sortLabel_count(NcutDiscrete);
+tmp = (D/scale_sig).^order;
+W = exp(-tmp);     % the similarity matrix
+NcutDiscrete = ncutW(W, k);
+label = sortLabel_count(NcutDiscrete);
 
-% bamboo shoot ncut
-% scale_sig = 0.01;
-label = zeros(size(D,1), 1);
-sel = [0 1];
-% sel = [0 2 4];
-for iter = 1:length(sel)
-    D1 = D(ismember(label,sel(iter)), ismember(label,sel(iter)));
-    W1 = exp(-(D1/scale_sig).^order);
-    NcutDiscrete1 = ncutW(W1, k);
-    [label1, clsSize] = sortLabel_count(NcutDiscrete1);
-    label1 = label1 + (iter-1)*k;
-    label(ismember(label,sel(iter))) = label1;
-%     sel = label1(1:s);
-%     scale_sig = scale_sig / 10;
-end
-label = sortLabel(label);
-W = 0;
+% % bamboo shoot ncut
+% % scale_sig = 0.01;
+% label = zeros(size(D,1), 1);
+% sel = [0 1];
+% % sel = [0 2 4];
+% for iter = 1:length(sel)
+%     D1 = D(ismember(label,sel(iter)), ismember(label,sel(iter)));
+%     W1 = exp(-(D1/scale_sig).^order);
+%     NcutDiscrete1 = ncutW(W1, k);
+%     [label1, clsSize] = sortLabel_count(NcutDiscrete1);
+%     label1 = label1 + (iter-1)*k;
+%     label(ismember(label,sel(iter))) = label1;
+% %     sel = label1(1:s);
+% %     scale_sig = scale_sig / 10;
+% end
+% label = sortLabel(label);
+% W = 0;
 
 % get centers of clusters
 centerInd = findCenters(D, label);

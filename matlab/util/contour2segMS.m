@@ -17,7 +17,7 @@ order = 6;
 epsilon = 0.075;
 [x, label] = indep_dyn_switch_detect1(vel,inf,epsilon,order);
 label = [label(1)*ones(1,order) label];
-uLabel = unique(label);
+[uLabel,~,label] = unique(label);
 nL = length(uLabel);
 
 seg(1:100) = struct('points',[],'vel',[],'loc',[0 0]);
@@ -46,11 +46,8 @@ if opt.draw
     color = hsv(nL);
     figure;plot(points(:,2), points(:,1),'.');hold on;
     set(gca,'YDir','reverse');
-    for j = 1:nL-1
-        ind = find(label==j);
-        for i=1:length(ind)
-            plot(points(ind(i),2), points(ind(i),1),'.','MarkerEdgeColor',color(j,:));
-        end
+    for j = 1:nL
+        plot(points(label==j,2), points(label==j,1),'.','MarkerEdgeColor',color(j,:));
     end
     hold off;
 end

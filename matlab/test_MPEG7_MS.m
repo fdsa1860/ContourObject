@@ -1,5 +1,5 @@
 
-% test_BSDS500
+% test_MPEG7
 % get contours from training data, do clustering, then label the test
 % contours, output label maps
 
@@ -9,7 +9,7 @@ addpath(genpath('../3rdParty'));
 addpath(genpath('../matlab'));
 addpath(genpath('../mex'));
 
-dataDir = '~/research/data/BSR/BSDS500/data';
+dataDir = '~/research/data/MPEG7';
 
 % parameters
 opt.hankel_size = 10;
@@ -27,40 +27,38 @@ opt.metric = 'HHt';
 % opt = 'mytest';
 
 %% get file name list
-trainFiles = dir(fullfile(dataDir,'groundTruth','train','*.mat'));
-nTrain = length(trainFiles);
-trainFileNameList = cell(1, nTrain);
-for i = 1:nTrain
-    trainFileNameList{i} = fullfile(dataDir,'groundTruth','train',trainFiles(i).name);
-end
-testFiles = dir(fullfile(dataDir,'groundTruth','test','*.mat'));
-nTest = length(testFiles);
-testFileNameList = cell(1, nTest);
-for i = 1:nTest
-    testFileNameList{i} = fullfile(dataDir,'groundTruth','test',testFiles(i).name);
+files = dir(fullfile(dataDir,'*.gif'));
+n = length(files);
+fileNameList = cell(1, n);
+for i = 1:n
+    fileNameList{i} = fullfile(dataDir,files(i).name);
 end
 
 %%
-% seg_train = cell(1, nTrain);
-% for i = 1:nTrain
-% % for i = 1
-%     t = importdata(trainFileNameList{i});
-% %     bw = t{opt.subjectNum}.Boundaries; cont = extractContBW(single(bw));
-%     R = t{opt.subjectNum}.Segmentation; cont = extractContFromRegion(R);
-%     contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
-%     contour = filterContourWithFixedLength(contour, opt.segLength);
-%     contour = filterContourWithLPF(contour);
-% %     seg = slideWindowContour2Seg(contour, opt.segLength);
-%     seg = contour2segModelSwitch(contour, opt);
-%     seg = addHH(seg, opt.hankel_size);
-%     seg = sigmaEst(seg);
-%     seg_train{i} = seg;
-% end
-load ../expData/seg_train_20150221
-for i = 1:length(seg_train)
-    seg_train{i} = addHH(seg_train{i}, opt.hankel_size, opt.metric);
-    seg_train{i} = sigmaEst(seg_train{i});
+nTrain = 600;
+seg_train = cell(1, nTrain);
+for i = 1:nTrain
+% for i = 1
+    [~,fname,ext] = fileparts(fileNameList{i});
+    I = imread(fileNameList{i});
+    R = I;
+    try
+        load(sprintf('../expData/MPEG7_ms_segments/seg_%s.mat',fname),'seg','shortSeg');
+    catch
+        cont = extractContFromRegion(R);
+        contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
+        contour = filterContourWithFixedLength(contour, opt.segLength);
+        contour = filterContourWithLPF(contour);
+        [seg, shortSeg] = contour2segModelSwitch(contour, opt);
+        seg = addHH(seg,opt.hankel_size);
+        seg = sigmaEst(seg);
+        save(sprintf('../expData/MPEG7_ms_segments/seg_%s.mat',fname),'seg','shortSeg');
+    end
+    seg = addHH(seg, opt.hankel_size, opt.metric);
+    seg = sigmaEst(seg);
+    seg_train{i} = seg;
 end
+
 %% pooling
 poolMaxSize = 50000;
 rng('default');
@@ -87,19 +85,15 @@ end
 % load ../expData/bsds_centers_w30_h10_a0_sig001_c3_20150224
 
 %% computer cluster centers
-nc = 30;
-% load ../expData/bsds_sD_h10_HtHcplx_a0_20150302;
-% load ../expData/bsds_sD_h10_HtH_a0_20150309;
-% load ../expData/bsds_sD_h10_HtH_a0_20150225;
-% load ../expData/bsds_sD_h10_HxytHxy_a0_20150225;
-load ../expData/bsds_sD_h10_a0_20150221
+nc = 10;
+load ../expData/mpeg7_sD_h10_a0_HHt_20150322;
 tic;
-[centers, sLabel, sD, W] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD, 1e-3, 1);
-% [centers, sLabel, sD, W] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha);
+[centers, sLabel, sD, W] = nCutContourHHSigma(segPool(1:5000), nc, opt.alpha, sD, 1e-3, 1);
+% [centers, sLabel, sD, W] = nCutContourHHSigma(segPool(1:5000), nc, opt.alpha);
 toc
-% save bsds_sD_a0_20150114 sD;
-% save bsds_centers_w100_a0_sig001_20150114 centers sLabel;
-% load ../expData/bsds_centers_w10_h10_a0_sig1e-5_o1_20150225
+% save mpeg7_sD_h10_a0_HtH_20150305 sD;
+% save mpeg7_centers_w30_h10_a0_s5_o1_HtH_20150305 centers sLabel;
+load ../expData/mpeg7_centers_w30_h10_a0_s5_o1_HtH_20150305
 
 %% show correspondence map
 % seg_test = cell(1, nTest);

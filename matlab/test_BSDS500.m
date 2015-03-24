@@ -16,13 +16,9 @@ opt.sampleMode = 1;
 opt.sampleLen = 1;
 opt.minLen = 2 * opt.hankel_size + 2;
 opt.segLength = 2 * opt.hankel_size + 1;
-opt.subjectNum = 1;
 opt.alpha = 0;
 opt.draw = false;
 opt.verbose = true;
-
-% opt = 'mytrain';
-% opt = 'mytest';
 
 %% get file name list
 trainFiles = dir(fullfile(dataDir,'groundTruth','train','*.mat'));
@@ -46,8 +42,9 @@ for i = 1:nTrain
     cont = extractContBW(single(bw));
     contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
     contour = filterContourWithFixedLength(contour, opt.segLength);
+    contour = filterContourWithLPF(contour);
     seg = slideWindowContour2Seg(contour, opt.segLength);
-    seg = addHH(seg);
+    seg = addHH(seg,opt.hankel_size+1,'HtH');
     seg = sigmaEst(seg);
     seg_train{i} = seg;
 end
@@ -66,11 +63,13 @@ for i = 1:numImg
 end
 
 %% computer cluster centers
-% nc = 10;
-% load ../expData/bsds_sD_h7_a0_20150114;
-% tic;
-% [centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD);
-% toc
+nc = 10;
+load ../expData/bsds_sD_h7_a0_20150114;
+% load ../expData/bsds_sD_SW_h7_a0_HtH_20150320
+tic;
+[centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD, 1e-3, 1);
+% [centers, sLabel, sD] = nCutContourHHSigma(segPool(1:10000), nc, opt.alpha, sD, 1e-5, 1);
+toc
 % save bsds_sD_a0_20150114 sD;
 % save bsds_centers_w100_a0_sig001_20150114 centers sLabel;
 load ../expData/bsds_centers_w10_h7_a0_sig001_20150114
