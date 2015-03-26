@@ -18,8 +18,10 @@ opt.segLength = 2 * opt.hankel_size + 1;
 opt.alpha = 0;
 opt.draw = true;
 opt.verbose = true;
-opt.metric = 'HtH';
-% opt.metric = 'HHt';
+% opt.metric = 'HtH';
+opt.metric = 'HHt';
+% opt.msDir = 'MPEG7_ms_segments';
+opt.msDir = 'MPEG7_ms_segments_greedy';
 
 %% get file name list
 files = dir(fullfile(dataDir,'*.gif'));
@@ -34,8 +36,8 @@ end
 % load ../expData/bsds_centers_w30_h10_a0_s5h_o1_HtH_20150314
 % load ../expData/mpeg7_centers_w30_h10_a0_s5_o1_HtH_20150305.mat;
 % load ../expData/mpeg7_centers_w10_h10_a0_knn_HtH_20150305.mat
-load ../expData/mpeg7_centers_w10_h10_a0_s5_o1_HtH_20150322
-% load ../expData/mpeg7_centers_w10_h10_a0_s3_o1_HHt_20150322
+% load ../expData/mpeg7_centers_w10_h10_a0_s5_o1_HtH_20150322
+load ../expData/mpeg7_centers_w10_h10_a0_s3_o1_HHt_20150322
 
 %% show correspondence map
 for i = 1:n
@@ -45,16 +47,14 @@ for i = 1:n
     I = imread(fileNameList{i});
     R = I;
     try
-        load(sprintf('../expData/MPEG7_ms_segments/seg_%s.mat',fname),'seg','shortSeg');
+        load(sprintf('../expData/%s/seg_%s.mat',opt.msDir,fname),'seg','shortSeg');
     catch
         cont = extractContFromRegion(R);
         contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
         contour = filterContourWithFixedLength(contour, opt.segLength);
         contour = filterContourWithLPF(contour);
         [seg, shortSeg] = contour2segModelSwitch(contour, opt);
-        seg = addHH(seg,opt.hankel_size);
-        seg = sigmaEst(seg);
-        save(sprintf('../expData/MPEG7_ms_segments/seg_%s.mat',fname),'seg','shortSeg');
+        save(sprintf('../expData/%s/seg_%s.mat',opt.msDir,fname),'seg','shortSeg');
     end
     seg = addHH(seg, opt.hankel_size, opt.metric);
     seg = sigmaEst(seg);

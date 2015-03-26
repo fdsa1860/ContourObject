@@ -21,6 +21,8 @@ opt.draw = true;
 opt.verbose = true;
 opt.dataset = 'train';
 opt.metric = 'HtH';
+% opt.msDir = 'ModelSwitchSegments';
+opt.msDir = 'ModelSwitchSegments_greedy';
 
 %% get file name list
 files = dir(fullfile(dataDir,'groundTruth',opt.dataset,'*.mat'));
@@ -63,16 +65,14 @@ for i = 108
         R = t{k}.Segmentation;
 %         R = imresize(R,2,'bilinear');
         try
-            load(sprintf('../expData/ModelSwitchSegments/seg_%s_%d_%d.mat',opt.dataset,i,k),'seg','shortSeg');
+            load(sprintf('../expData/%s/seg_%s_%d_%d.mat',opt.msDir,opt.dataset,i,k),'seg','shortSeg');
         catch
             cont = extractContFromRegion(R);
             contour = sampleAlongCurve(cont, opt.sampleMode, opt.sampleLen);
             contour = filterContourWithFixedLength(contour, opt.segLength);
             contour = filterContourWithLPF(contour);
             [seg, shortSeg] = contour2segModelSwitch(contour, opt);
-            seg = addHH(seg,opt.hankel_size);
-            seg = sigmaEst(seg);
-            save(sprintf('../expData/ModelSwitchSegments/seg_%s_%d_%d.mat',opt.dataset,i,k),'seg','shortSeg');
+            save(sprintf('../expData/%s/seg_%s_%d_%d.mat',opt.msDir,opt.dataset,i,k),'seg','shortSeg');
         end
         
         seg = addHH(seg, opt.hankel_size, opt.metric);

@@ -89,10 +89,11 @@ if isempty(x); display('infeasible!!'); group =[]; return; end
 
 p_est = x(1:num_param);
 ind1 = find( z > delta );
-ind = [1 ind1' num_frame];
+% ind = [1 ind1' num_frame];
+ind = [0 ind1' num_frame]; % modified by xikang
 l = length(ind);
 
-ind(l) = num_frame+1;
+% ind(l) = num_frame+1;
 group = [];
 for i = 1:l-1;
     group = [group i*ones(1,ind(i+1)-ind(i))];

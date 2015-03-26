@@ -1,4 +1,4 @@
-function seg = curveSplit(S, v)
+function seg = curveSplit(S, v, isClosed)
 % split contour according to indices
 % Input:
 % S: n-by-2 matrix, the contour coordinates
@@ -9,7 +9,9 @@ function seg = curveSplit(S, v)
 
 n = size(S, 1);
 assert(length(v)==n);
-isClosed = (S(1,1)==S(end,1) && S(1,2)==S(end,2));
+if ~exist('isClosed','var')
+    isClosed = all(S(1,:)==S(end,:));
+end
 
 % if all points are valid return S
 if all(v), seg{1} = S; return; end
@@ -27,7 +29,7 @@ for i = 1:k
     seg{i} = S(indS(i):indE(i), :);
 end
 
-% if the contour is not closed, just split it
+% if the contour is closed, concatenate the first and the last segment
 if isClosed && v(1)
     assert(v(1)==v(end));
     tmp = seg{1}(2:end, :);
